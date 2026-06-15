@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ========== ESTILOS ORIGINALES (sin cambios) ========== */
+        /* ========== ESTILOS ORIGINALES (sin cambios en diseño ni textos) ========== */
         :root {
             --bg-main: #0f0f1a;
             --bg-sidebar: #12121f;
@@ -320,6 +320,7 @@
         .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
         .pagination button:hover:not(:disabled) { background: var(--accent-orange); color: white; border-color: var(--accent-orange); }
         .page-info { font-size: 0.8rem; color: var(--text-secondary); }
+        /* Panel de detalle: en escritorio lateral, en móvil bloque debajo de la tabla */
         .detail-panel {
             position: fixed;
             right: 0;
@@ -508,9 +509,8 @@
         .btn-submit { background: #25D366; color: white; }
         .btn-cancel { background: var(--border-color); color: var(--accent-orange); }
         
-        /* ========== MEDIA QUERIES PARA MÓVIL (sin modificar diseño original, solo adaptación) ========== */
+        /* ========== RESPONSIVE PARA MÓVIL ========== */
         @media (max-width: 768px) {
-            /* Apilar sidebar y contenido principal verticalmente */
             .dashboard {
                 flex-direction: column;
                 overflow: auto;
@@ -527,37 +527,49 @@
             .main-content {
                 padding: 16px;
                 overflow-y: auto;
-                min-height: 60vh;
             }
-            /* Panel de detalle: ocupa toda la pantalla en móvil */
             .detail-panel {
-                width: 100% !important;
-                left: 0 !important;
-                right: auto !important;
+                position: relative;
+                width: 100%;
+                height: auto;
+                max-height: none;
+                transform: none;
+                transition: none;
                 border-left: none;
-                border-top: 1px solid var(--border-color);
+                margin-top: 20px;
+                border-radius: 24px;
+                box-shadow: none;
+                display: none;
             }
-            /* Ajustes de tablas para scroll horizontal */
+            .detail-panel.open {
+                display: flex;
+                transform: none;
+            }
+            .detail-header {
+                position: sticky;
+                top: 0;
+                background: var(--card-bg);
+                z-index: 10;
+                border-radius: 24px 24px 0 0;
+            }
             .table-scroll {
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
             table {
+                min-width: 600px;
                 table-layout: auto;
-                min-width: 600px; /* para que se pueda hacer scroll si es necesario */
             }
             th, td {
                 padding: 8px 10px;
                 font-size: 0.7rem;
             }
-            /* Tarjetas de resumen en columna */
             .summary-row {
                 flex-direction: column;
             }
             .summary-card {
                 flex: auto;
             }
-            /* Filtros en columna */
             .filters-row {
                 flex-direction: column;
                 align-items: stretch;
@@ -569,7 +581,6 @@
                 margin-top: 8px;
                 width: 100%;
             }
-            /* Cumpleaños: ajuste de tamaño */
             .birthday-item {
                 font-size: 0.7rem;
                 padding: 6px 10px;
@@ -578,13 +589,11 @@
                 font-size: 0.6rem;
                 padding: 3px 8px;
             }
-            /* Botones de acción en tabla */
             .btn-wa-table, .btn-wa2-table, .btn-appointment-table {
                 padding: 3px 6px;
                 font-size: 0.6rem;
                 margin-right: 2px;
             }
-            /* Top bar */
             .top-bar {
                 flex-direction: column;
                 align-items: flex-start;
@@ -593,7 +602,6 @@
                 width: 100%;
                 justify-content: space-between;
             }
-            /* Modales */
             .modal-content {
                 width: 95%;
                 padding: 16px;
@@ -689,11 +697,12 @@
                 <button id="nextPageBtn" disabled>Siguiente <i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
-    </div>
 
-    <div class="detail-panel" id="detailPanel">
-        <div class="detail-header"><h3 id="detailTitle">Responsable: --</h3><button class="close-detail" id="closeDetailBtn"><i class="fas fa-times"></i></button></div>
-        <div class="detail-content" id="clientDetail"><div class="empty-message">Selecciona un aplicante para ver su información</div></div>
+        <!-- Panel de detalle: ahora se mostrará debajo de la tabla en móvil -->
+        <div class="detail-panel" id="detailPanel">
+            <div class="detail-header"><h3 id="detailTitle">Responsable: --</h3><button class="close-detail" id="closeDetailBtn"><i class="fas fa-times"></i></button></div>
+            <div class="detail-content" id="clientDetail"><div class="empty-message">Selecciona un aplicante para ver su información</div></div>
+        </div>
     </div>
 </div>
 
@@ -751,7 +760,7 @@
 </div>
 
 <script>
-    // ========== TODO EL CÓDIGO JAVASCRIPT ORIGINAL (sin cambios) ==========
+    // ========== CÓDIGO JAVASCRIPT (con la función getAppointmentMessage modificada) ==========
     const API_URL = "https://script.google.com/macros/s/AKfycbxSiZXMxV4zw7IDvCFLtAcN7_aTYf4kbV1wcEGjgm_RK_qJ7eY2F8c2zwZOGIe7PO_gxA/exec";
     let rawData = [];
     let filteredData = [];
@@ -802,9 +811,22 @@ Le escribo para saludarlo y recordarle que estamos para brindarle nuestra ayuda 
 Quedo atento. Que tenga una ${despedida}.`;
     }
     
+    // ========== MENSAJE DE CITA MODIFICADO SEGÚN SOLICITUD ==========
     function getAppointmentMessage(patientName, doctorName, type, date, time, address, clinicPhone) {
-        return `Cita: ${type}\nMD: ${doctorName}\nPaciente: ${patientName}\nFECHA: ${date}\nHORA: ${time}\nDIRECCION: ${address}\nTELEFONO: ${clinicPhone}\n\nSe recomienda llevar historial medico si aplica.\nLlegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anticipación y reprogramar su cita al número que le enviamos, si no se le cobra un Bill, llevar ID, tarjeta del seguro.`;
+        return `CITA AGENDADA
+PACIENTE: ${patientName}
+CITA: ${type}
+MD: ${doctorName}
+FECHA: ${date}
+HORA: ${time}
+DIRECCION: ${address}
+TELEFONO: ${clinicPhone}
+
+Se recomienda llevar historial medico si aplica.
+Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anticipación y reprogramar su cita al número que le enviamos, si no se le cobra un Bill, llevar ID, tarjeta del seguro.`;
     }
+    // ========== FIN MODIFICACIÓN ==========
+
     function getBirthdayWhatsAppMessage(personFirstName) {
         let firstNameUpper = personFirstName ? personFirstName.toUpperCase() : "AMIGO/A";
         return `🎁 ¡HAPPY BIRTHDAY ${firstNameUpper}! Hoy es un día ESPECIAL y no quería dejar de FELICITARTE, deseándote SALUD y ÉXITO para ti en este día.\nEs por eso que ENGELBERTH BECERRA, tu Agente de SEGUROS, y su equipo lo saben.\n\n¡¡¡FELIZ CUMPLEAÑOS!!! Que lo pases ESPECTACULAR junto a tu FAMILIA 🥳🍻🍰🎈`;
@@ -963,7 +985,6 @@ Quedo atento. Que tenga una ${despedida}.`;
             portalHtml = `<div class="detail-section"><h4><i class="fas fa-globe"></i> Portal / Email</h4><div class="detail-grid">`;
             if(accesoCompania) portalHtml += `<div class="detail-item"><div class="detail-label">Acceso a compañía</div><div class="detail-value">${escapeHtml(accesoCompania)}</div></div>`;
             if(emailCreado) {
-                // Mostrar siempre como "E-mail creado" (ajustado según tu petición)
                 portalHtml += `<div class="detail-item"><div class="detail-label">E-mail creado</div><div class="detail-value">${escapeHtml(emailCreado)}</div></div>`;
             }
             portalHtml += `</div></div>`;
