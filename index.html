@@ -2,12 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>GEF INSURANCE | Dashboard Obamacare</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* (el mismo CSS que antes, sin cambios) */
+        /* (estilos iguales que antes, no cambio nada aquí por brevedad, pero los incluyo igual) */
         :root {
             --bg-main: #0f0f1a;
             --bg-sidebar: #12121f;
@@ -26,6 +26,7 @@
             --input-bg: #0f0f1a;
             --input-border: #2a2a3c;
             --agent-bg: #16162a;
+            --birthday-bg: #2a1e2a;
         }
         body.light {
             --bg-main: #f0f2f5;
@@ -45,22 +46,18 @@
             --input-bg: #ffffff;
             --input-border: #cbd5e1;
             --agent-bg: #f8fafc;
+            --birthday-bg: #fef3c7;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg-main);
             color: var(--text-primary);
-            height: 100vh;
             overflow: hidden;
             transition: background 0.2s, color 0.2s;
         }
-        .dashboard {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-            overflow: hidden;
-        }
+        .dashboard { display: flex; height: 100%; width: 100%; overflow: hidden; }
         .sidebar {
             width: 280px;
             background: var(--bg-sidebar);
@@ -68,247 +65,261 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            padding: 24px 16px;
-            gap: 28px;
+            padding: 20px 16px;
+            gap: 20px;
             flex-shrink: 0;
         }
         .logo-area h1 {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 800;
             background: linear-gradient(135deg, var(--accent-coral), var(--accent-orange));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
-        .logo-area p {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-top: 6px;
-        }
-        .kpis-vertical {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+        .logo-area p { font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; }
+        .kpis-vertical { display: flex; flex-direction: column; gap: 10px; }
         .kpi-vertical {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 16px;
+            border-radius: 20px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border: 1px solid var(--border-color);
         }
-        .kpi-vertical-info h4 {
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-        }
-        .kpi-vertical-number {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--accent-orange);
-            line-height: 1.2;
-        }
-        .kpi-vertical-icon {
-            font-size: 2rem;
-            color: var(--accent-purple);
-            opacity: 0.8;
-        }
+        .kpi-vertical-info h4 { font-size: 0.65rem; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); }
+        .kpi-vertical-number { font-size: 1.4rem; font-weight: 800; color: var(--accent-orange); line-height: 1.2; }
+        .kpi-vertical-icon { font-size: 1.6rem; color: var(--accent-purple); opacity: 0.8; }
         .sidebar-section h3 {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             color: var(--text-secondary);
             border-left: 3px solid var(--accent-coral);
-            padding-left: 12px;
+            padding-left: 10px;
         }
-        .agents-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .agents-list { display: flex; flex-direction: column; gap: 8px; }
         .agent-mini {
             background: var(--agent-bg);
-            border-radius: 20px;
-            padding: 12px;
+            border-radius: 16px;
+            padding: 8px 10px;
             border: 1px solid var(--border-color);
         }
-        .agent-mini-name {
-            font-weight: 700;
-            color: var(--accent-orange);
-        }
-        .agent-mini-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-        }
+        .agent-mini-name { font-weight: 700; font-size: 0.8rem; color: var(--accent-orange); }
+        .agent-mini-stats { display: flex; justify-content: space-between; margin-top: 6px; font-size: 0.65rem; color: var(--text-secondary); }
         .agent-mini-stats span { color: var(--accent-orange); font-weight: 700; }
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            padding: 24px 28px;
-            gap: 24px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px 24px;
+            gap: 16px;
+            min-width: 0;
         }
-        .summary-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            margin-bottom: 0;
-        }
+        .summary-row { display: flex; flex-wrap: wrap; gap: 15px; flex-shrink: 0; }
         .summary-card {
-            flex: 1 1 280px;
+            flex: 1 1 240px;
             background: var(--card-bg);
-            border-radius: 28px;
-            padding: 18px;
+            border-radius: 24px;
+            padding: 12px 16px;
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            max-height: 350px;
         }
         .summary-card h3 {
-            font-size: 1.1rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
             color: var(--accent-orange);
-            border-left: 4px solid var(--accent-coral);
-            padding-left: 12px;
-            flex-shrink: 0;
+            border-left: 3px solid var(--accent-coral);
+            padding-left: 8px;
         }
-        .summary-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
-        }
+        .summary-list { display: flex; flex-direction: column; gap: 6px; }
         .summary-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
-            padding-bottom: 6px;
+            font-size: 0.75rem;
+            padding-bottom: 4px;
             border-bottom: 1px solid var(--border-color);
         }
-        .summary-label {
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
+        .summary-label { font-weight: 500; color: var(--text-secondary); }
         .summary-value {
             font-weight: 700;
             background: var(--bg-sidebar);
-            padding: 2px 12px;
-            border-radius: 30px;
+            padding: 2px 8px;
+            border-radius: 20px;
             color: var(--accent-orange);
+            font-size: 0.7rem;
         }
+        .birthday-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            flex-shrink: 0;
+        }
+        .birthday-card h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+            border-left: 3px solid var(--accent-coral);
+            padding-left: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .birthday-list { display: flex; flex-wrap: wrap; gap: 12px; }
+        .birthday-item {
+            background: var(--birthday-bg);
+            border-radius: 20px;
+            padding: 8px 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            flex-wrap: wrap;
+        }
+        .birthday-icon { color: #f59e0b; font-size: 1rem; }
+        .birthday-name { font-weight: 600; }
+        .birthday-relation { font-size: 0.65rem; color: var(--accent-coral); background: rgba(0,0,0,0.1); padding: 2px 6px; border-radius: 20px; }
+        .birthday-date { color: var(--accent-coral); font-weight: 500; }
+        .birthday-days { background: var(--accent-orange); color: white; border-radius: 30px; padding: 2px 8px; font-size: 0.65rem; }
+        .birthday-wa-btn {
+            background: #25D366;
+            border: none;
+            border-radius: 30px;
+            padding: 4px 10px;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+            margin-left: 4px;
+        }
+        .birthday-wa-btn:hover { background: #128C7E; }
+        .empty-birthday { color: var(--text-muted); font-size: 0.75rem; padding: 8px 0; }
         .filters-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
             align-items: flex-end;
             background: var(--card-bg);
-            padding: 16px 20px;
-            border-radius: 28px;
+            padding: 12px 16px;
+            border-radius: 24px;
             border: 1px solid var(--border-color);
+            flex-shrink: 0;
         }
-        .filter-item {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            min-width: 140px;
-        }
-        .filter-item label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-        }
+        .filter-item { display: flex; flex-direction: column; gap: 4px; min-width: 120px; flex: 1 0 auto; }
+        .filter-item label { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); }
         .filter-item input, .filter-item select {
             background: var(--input-bg);
             border: 1px solid var(--input-border);
-            padding: 8px 14px;
-            border-radius: 40px;
+            padding: 6px 12px;
+            border-radius: 30px;
             color: var(--text-primary);
             font-family: inherit;
-        }
-        .filter-item select option {
-            text-transform: uppercase;
+            font-size: 0.75rem;
         }
         .clear-btn {
             background: var(--border-color);
             border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
+            padding: 6px 16px;
+            border-radius: 30px;
             font-weight: 500;
             cursor: pointer;
             color: var(--accent-orange);
-            margin-top: 18px;
+            margin-top: 16px;
+            font-size: 0.7rem;
         }
         .table-wrapper {
             background: var(--card-bg);
-            border-radius: 28px;
+            border-radius: 24px;
             border: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            flex: 1;
-            min-height: 0;
+            width: 100%;
         }
         .table-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 20px;
+            padding: 12px 20px;
             border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 8px;
         }
-        .table-header span {
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--accent-orange);
-            font-size: 1rem;
-        }
+        .table-header span { text-transform: uppercase; font-weight: 700; color: var(--accent-orange); font-size: 0.9rem; }
         .records-selector {
             background: var(--input-bg);
-            padding: 4px 12px;
+            padding: 2px 10px;
             border-radius: 30px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
-        .table-scroll {
-            height: 500px;
-            overflow-y: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-        }
-        th {
-            text-align: left;
-            padding: 12px 16px;
-            background: var(--table-header-bg);
-            color: var(--text-secondary);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-        }
-        tr.selected-row td {
-            background: var(--selected-row);
-            color: var(--accent-orange);
-        }
+        .table-scroll { overflow: visible; width: 100%; }
+        table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 0.75rem; }
+        th, td { padding: 10px 12px; border-bottom: 1px solid var(--border-color); word-break: break-word; vertical-align: middle; }
+        th { text-align: left; background: var(--table-header-bg); color: var(--text-secondary); font-weight: 600; }
+        td { cursor: pointer; }
+        tr.selected-row td { background: var(--selected-row); color: var(--accent-orange); }
         tr:hover td { background: var(--table-row-hover); }
+        .btn-wa-table, .btn-wa2-table, .btn-appointment-table {
+            border: none;
+            border-radius: 30px;
+            padding: 4px 10px;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+            white-space: nowrap;
+            margin-right: 5px;
+            margin-bottom: 3px;
+        }
+        .btn-wa-table { background: #25D366; }
+        .btn-wa-table:hover { background: #128C7E; }
+        .btn-wa2-table { background: #34B7F1; }
+        .btn-wa2-table:hover { background: #1DA1F2; }
+        .btn-appointment-table { background: #3b82f6; }
+        .btn-appointment-table:hover { background: #2563eb; }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border-color);
+            background: var(--card-bg);
+            flex-shrink: 0;
+        }
+        .pagination button {
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border-color);
+            color: var(--accent-orange);
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination button:hover:not(:disabled) { background: var(--accent-orange); color: white; border-color: var(--accent-orange); }
+        .page-info { font-size: 0.8rem; color: var(--text-secondary); }
         .detail-panel {
             position: fixed;
             right: 0;
@@ -324,100 +335,52 @@
             z-index: 1000;
             box-shadow: -5px 0 20px rgba(0,0,0,0.3);
         }
-        .detail-panel.open {
-            transform: translateX(0);
-        }
+        .detail-panel.open { transform: translateX(0); }
         .detail-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 24px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border-color);
             background: var(--card-bg);
         }
-        .detail-header h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--accent-orange);
-        }
-        .close-detail {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--text-secondary);
-        }
+        .detail-header h3 { font-size: 1rem; font-weight: 600; color: var(--accent-orange); }
+        .close-detail { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-secondary); }
         .close-detail:hover { color: var(--accent-coral); }
-        .detail-content {
-            padding: 20px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .detail-section {
-            margin-bottom: 24px;
-        }
+        .detail-content { padding: 16px; overflow-y: auto; flex: 1; }
+        .detail-section { margin-bottom: 20px; }
         .detail-section h4 {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--accent-orange);
-            margin-bottom: 12px;
-            border-left: 3px solid var(--accent-coral);
-            padding-left: 10px;
-        }
-        .detail-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-            background: var(--bg-sidebar);
-            border-radius: 20px;
-            padding: 12px;
-        }
-        .detail-item {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-        }
-        .detail-label {
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: var(--text-muted);
-        }
-        .detail-value {
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-top: 4px;
-            color: var(--text-primary);
-            word-break: break-word;
-        }
-        .family-block {
-            background: var(--bg-sidebar);
-            border-radius: 20px;
-            padding: 12px;
-            margin-bottom: 16px;
-        }
-        .family-title {
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--accent-orange);
             margin-bottom: 10px;
-            font-size: 0.85rem;
+            border-left: 3px solid var(--accent-coral);
+            padding-left: 8px;
         }
-        .family-grid {
+        .detail-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 8px;
+            gap: 10px;
+            background: var(--bg-sidebar);
+            border-radius: 16px;
+            padding: 10px;
         }
-        .empty-message {
-            text-align: center;
-            color: var(--text-muted);
-            padding: 30px;
+        .detail-item {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
         }
+        .detail-label { font-size: 0.6rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+        .detail-value { font-size: 0.75rem; font-weight: 500; margin-top: 4px; color: var(--text-primary); word-break: break-word; white-space: pre-wrap; }
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+            gap: 10px;
+            flex-shrink: 0;
         }
         .top-bar h2 {
             text-transform: uppercase;
@@ -426,24 +389,126 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            font-size: 1.3rem;
+            font-size: 1.1rem;
         }
-        .btn-group {
-            display: flex;
-            gap: 12px;
-        }
+        .btn-group { display: flex; gap: 10px; }
         .theme-toggle, .refresh-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            padding: 8px 20px;
-            border-radius: 40px;
+            padding: 6px 16px;
+            border-radius: 30px;
             color: var(--accent-orange);
             cursor: pointer;
             font-weight: 500;
+            font-size: 0.7rem;
         }
-        @media (max-width: 1000px) {
-            .detail-panel { width: 100%; }
-            .summary-row { flex-direction: column; }
+        .btn-wa-detail, .btn-wa2-detail, .btn-appointment-detail {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            width: 100%;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .btn-wa-detail { background: #25D366; }
+        .btn-wa-detail:hover { background: #128C7E; }
+        .btn-wa2-detail { background: #34B7F1; }
+        .btn-wa2-detail:hover { background: #1DA1F2; }
+        .btn-appointment-detail { background: #3b82f6; margin-top: 8px; }
+        .btn-appointment-detail:hover { background: #2563eb; }
+        .empty-message { color: var(--text-muted); font-size: 0.75rem; text-align: center; padding: 16px; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+        .modal-header h3 { color: var(--accent-orange); }
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .form-group {
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            padding: 8px 12px;
+            border-radius: 30px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.8rem;
+        }
+        .disclaimer {
+            background: var(--birthday-bg);
+            padding: 10px;
+            border-radius: 16px;
+            font-size: 0.7rem;
+            margin: 12px 0;
+            color: var(--text-primary);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 8px;
+            border-radius: 30px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-submit { background: #25D366; color: white; }
+        .btn-cancel { background: var(--border-color); color: var(--accent-orange); }
+        @media (max-width: 480px) {
+            .modal-content { width: 95%; padding: 16px; }
         }
     </style>
 </head>
@@ -452,7 +517,7 @@
     <div class="sidebar">
         <div class="logo-area">
             <h1>GEF INSURANCE</h1>
-            <p>Obamacare - Costumer</p>
+            <p>Obamacare - Customer</p>
         </div>
         <div class="kpis-vertical">
             <div class="kpi-vertical"><div class="kpi-vertical-info"><h4>Activos</h4><div class="kpi-vertical-number" id="totalActive">--</div></div><i class="fas fa-heartbeat kpi-vertical-icon"></i></div>
@@ -490,6 +555,11 @@
             </div>
         </div>
 
+        <div class="birthday-card" id="birthdayNotifier">
+            <h3><i class="fas fa-birthday-cake birthday-icon"></i> Cumpleaños de Hoy</h3>
+            <div id="birthdayList" class="birthday-list">Cargando...</div>
+        </div>
+
         <div class="filters-row">
             <div class="filter-item"><label>🔍 Buscar</label><input type="text" id="searchInput" placeholder="Nombre, compañía..."></div>
             <div class="filter-item"><label>🏢 Compañía</label><select id="companyFilter"><option value="">Todas</option></select></div>
@@ -505,31 +575,86 @@
                 <div class="records-selector">
                     <label>Mostrar:</label>
                     <select id="rowsPerPageSelect">
-                        <option value="10" selected>10</option>
-                        <option value="25">25</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
                         <option value="50">50</option>
-                        <option value="100">100</option>
                         <option value="all">Todos</option>
                     </select>
                 </div>
             </div>
             <div class="table-scroll">
                 <table id="clientTable">
-                    <thead><tr><th>Nombre y Apellido</th><th>Compañía</th><th>N° Miembros</th></tr></thead>
-                    <tbody id="tableBody"><tr><td colspan="3">Cargando datos...</td></tr></tbody>
+                    <thead>
+                        <tr><th>Nombre y Apellido</th><th>Compañía</th><th>N° Miembros</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody id="tableBody"><tr><td colspan="4">Cargando datos......</td></tr>
+                </tbody>
                 </table>
+            </div>
+            <div class="pagination" id="paginationControls">
+                <button id="prevPageBtn" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+                <span class="page-info" id="pageInfo">Página 1 de 1</span>
+                <button id="nextPageBtn" disabled>Siguiente <i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
     </div>
 
     <div class="detail-panel" id="detailPanel">
-        <div class="detail-header">
-            <h3 id="detailTitle">Responsable: --</h3>
-            <button class="close-detail" id="closeDetailBtn"><i class="fas fa-times"></i></button>
+        <div class="detail-header"><h3 id="detailTitle">Responsable: --</h3><button class="close-detail" id="closeDetailBtn"><i class="fas fa-times"></i></button></div>
+        <div class="detail-content" id="clientDetail"><div class="empty-message">Selecciona un aplicante para ver su información</div></div>
+    </div>
+</div>
+
+<div id="appointmentModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-calendar-plus"></i> Agendar cita médica</h3>
+            <button class="close-modal" id="closeModalBtn">&times;</button>
         </div>
-        <div class="detail-content" id="clientDetail">
-            <div class="empty-message">Selecciona un aplicante para ver su información</div>
-        </div>
+        <form id="appointmentForm">
+            <div class="form-group">
+                <label>Paciente (quién va a la cita)</label>
+                <select id="patientSelect" required>
+                    <option value="">Seleccionar paciente...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Tipo de cita</label>
+                <select id="appointmentType" required>
+                    <option value="Médico Primario">Médico Primario</option>
+                    <option value="Especialista">Especialista</option>
+                    <option value="Examen">Examen</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Médico (MD)</label>
+                <input type="text" id="doctorName" placeholder="Nombre del médico que atenderá" required>
+            </div>
+            <div class="form-group">
+                <label>Fecha (DD/MM/AAAA)</label>
+                <input type="text" id="appointmentDate" placeholder="Ej: 15/06/2026" required>
+            </div>
+            <div class="form-group">
+                <label>Hora</label>
+                <input type="text" id="appointmentTime" placeholder="Ej: 10:30 AM" required>
+            </div>
+            <div class="form-group">
+                <label>Dirección del centro médico</label>
+                <input type="text" id="appointmentAddress" placeholder="Dirección completa" required>
+            </div>
+            <div class="form-group">
+                <label>Teléfono de contacto de la clínica</label>
+                <input type="text" id="clinicPhone" placeholder="Ej: +1 305 555 1234" required>
+            </div>
+            <div class="disclaimer">
+                <i class="fas fa-info-circle"></i> Se recomienda llevar historial médico si aplica.<br>
+                Llegar 30 minutos antes de la cita. Si no puede asistir, llamar 48 horas antes para reprogramar. Si no avisa, se cobra un "Bill". Llevar ID y tarjeta del seguro.
+            </div>
+            <div class="modal-buttons">
+                <button type="submit" class="btn-submit"><i class="fab fa-whatsapp"></i> Enviar cita</button>
+                <button type="button" class="btn-cancel" id="cancelModalBtn">Cancelar</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -538,349 +663,321 @@
     let rawData = [];
     let filteredData = [];
     let selectedRecord = null;
-    let currentLimit = 10;
+    let currentPage = 1;
+    let rowsPerPage = 10;
+    let pendingAppointment = { phone: null, record: null };
 
-    function getCompanyStyle(companyName) {
-        if (!companyName) return { color: 'inherit', icon: null };
-        const name = companyName.trim().toLowerCase();
-        if (name === "oscar") return { color: '#1ABC9C', icon: null };
-        if (name === "ambetter") return { color: '#E83C6B', icon: null };
-        if (name === "united healthcare" || name === "unitedhealthcare") return { color: '#0072CE', icon: null };
-        if (name === "blue cross") return { color: '#003366', icon: null };
-        if (name === "florida blue") return { color: '#1E3A8A', icon: null };
-        if (name === "kaiser permanente") return { color: '#8B5CF6', icon: null };
-        return { color: 'inherit', icon: null };
+    function toTitleCase(str) {
+        if (!str) return '';
+        return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
 
-    function sortByName(data) {
-        return data.sort((a, b) => {
-            const nameA = (a["NOMBRE Y APELLIDO"] || "").toLowerCase();
-            const nameB = (b["NOMBRE Y APELLIDO"] || "").toLowerCase();
-            return nameA.localeCompare(nameB);
+    function capitalizarNombre(nombre) { if (!nombre) return ""; return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase(); }
+    
+    function getWhatsAppMessage(primerNombre) {
+        const today = new Date();
+        const dayOfWeek = today.getDay();
+        let saludo = "";
+        let semanaTexto = "";
+        if (dayOfWeek === 1) {
+            saludo = "🌟 ¡Feliz inicio de semana! 🌟";
+            semanaTexto = "esta nueva semana";
+        } else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
+            saludo = "🌟 ¡Feliz semana! 🌟";
+            semanaTexto = "estos días";
+        } else {
+            saludo = "🌟 ¡Feliz fin de semana! 🌟";
+            semanaTexto = "este fin de semana";
+        }
+        return `${saludo}
+Esperamos que se encuentren muy bien y que ${semanaTexto} esté llena de salud, éxitos y bendiciones para usted y su familia.
+Queremos recordarle que cuenta con nuestro apoyo para coordinar cualquier cita médica, resolver dudas sobre su cobertura o brindarle la información que necesite relacionada con su seguro de salud.
+Estamos a su disposición para ayudarle y asegurarnos de que aproveche al máximo sus beneficios.
+¡Que tenga una excelente semana!
+Atentamente, su equipo de atención al cliente de GEF INSURANCE.`;
+    }
+    
+    function getWhatsAppMessage2(primerNombre) {
+        const hours = new Date().getHours();
+        const esManana = hours < 12;
+        const saludo = esManana ? "Buenos días" : "Buenas tardes";
+        const despedida = esManana ? "lindo día" : "linda tarde";
+        const nombreCapitalizado = capitalizarNombre(primerNombre);
+        return `${saludo} ${nombreCapitalizado}, espero que se encuentre bien.
+Le escribo para saludarlo y recordarle que estamos para brindarle nuestra ayuda con alguna información que requiera de su seguro, agendamiento de citas médicas o algún chequeo que requiera hacerse. Con gusto estaremos disponibles cuando lo necesite.
+
+Quedo atento. Que tenga una ${despedida}.`;
+    }
+    
+    function getAppointmentMessage(patientName, doctorName, type, date, time, address, clinicPhone) {
+        return `Cita: ${type}\nMD: ${doctorName}\nPaciente: ${patientName}\nFECHA: ${date}\nHORA: ${time}\nDIRECCION: ${address}\nTELEFONO: ${clinicPhone}\n\nSe recomienda llevar historial medico si aplica.\nLlegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anticipación y reprogramar su cita al número que le enviamos, si no se le cobra un Bill, llevar ID, tarjeta del seguro.`;
+    }
+    function getBirthdayWhatsAppMessage(personFirstName) {
+        let firstNameUpper = personFirstName ? personFirstName.toUpperCase() : "AMIGO/A";
+        return `🎁 ¡HAPPY BIRTHDAY ${firstNameUpper}! Hoy es un día ESPECIAL y no quería dejar de FELICITARTE, deseándote SALUD y ÉXITO para ti en este día.\nEs por eso que ENGELBERTH BECERRA, tu Agente de SEGUROS, y su equipo lo saben.\n\n¡¡¡FELIZ CUMPLEAÑOS!!! Que lo pases ESPECTACULAR junto a tu FAMILIA 🥳🍻🍰🎈`;
+    }
+    function getCompanyStyle(companyName) { if (!companyName) return { color: 'inherit' }; const name = companyName.trim().toLowerCase(); if (name === "oscar") return { color: '#14b8a6' }; if (name === "ambetter") return { color: '#f43f5e' }; if (name === "united healthcare" || name === "unitedhealthcare") return { color: '#3b82f6' }; if (name === "blue cross") return { color: '#3b82f6' }; if (name === "florida blue") return { color: '#60a5fa' }; if (name === "kaiser permanente") return { color: '#a78bfa' }; return { color: 'inherit' }; }
+    function normalizePhone(phone) { if (!phone) return null; let cleaned = phone.toString().replace(/\D/g, ''); if (cleaned.length === 10) cleaned = '1' + cleaned; if (cleaned.length === 11 && cleaned.startsWith('1')) return '+' + cleaned; if (phone.toString().startsWith('+')) return phone.toString().replace(/\s/g, ''); return null; }
+    function openWhatsApp(phone, message) { if (!phone) { alert("No hay número de teléfono registrado para este cliente."); return; } const normalized = normalizePhone(phone); if (!normalized) { alert("El número de teléfono no tiene un formato válido. Debe tener 10 dígitos (EEUU) o incluir código de país."); return; } const encoded = encodeURIComponent(message); window.open(`https://wa.me/${normalized}?text=${encoded}`, '_blank'); }
+    function openBirthdayWhatsApp(phone, personFullName) { if (!phone) { alert("No hay número"); return; } let firstName = personFullName ? personFullName.split(' ')[0] : ""; const msg = getBirthdayWhatsAppMessage(firstName); openWhatsApp(phone, msg); }
+    function sortByName(data) { return data.sort((a,b) => (a["NOMBRE Y APELLIDO"] || "").toLowerCase().localeCompare((b["NOMBRE Y APELLIDO"] || "").toLowerCase())); }
+    function isActive(status) { return status && String(status).toLowerCase().includes("activo"); }
+    function getPrimaValue(record) { let prima = record["PRIMA"]; let num = parseFloat(prima); return isNaN(num) ? 0 : num; }
+    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    function formatDateToMDY(value) { if (!value) return null; let s = value.toString().trim(); if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) { let p = s.split('/'); return `${p[0].padStart(2,'0')}/${p[1].padStart(2,'0')}/${p[2]}`; } if (/^\d{4}-\d{2}-\d{2}$/.test(s)) { let p = s.split('-'); return `${p[1]}/${p[2]}/${p[0]}`; } let d = new Date(s); if (!isNaN(d.getTime())) { return `${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getDate().toString().padStart(2,'0')}/${d.getFullYear()}`; } return s; }
+    function parseDate(dateStr) { if (!dateStr) return null; let s = dateStr.toString().trim(); let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if(m) return new Date(parseInt(m[3]), parseInt(m[1])-1, parseInt(m[2])); m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/); if(m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3])); let d = new Date(s); return isNaN(d.getTime())?null:d; }
+    function getSpouseInfo(record) { let name = record["ESPOS@/PAREJA"] || null; let gender = record["GENERO ESPOS@/PAREJA"] || null; let birth = record["FECHA DE NACIMIENTO ESPOS@/PAREJA"] || null; let applicant = record["APLICANTE ESPOS@/PAREJA"] || null; let status = record["ESTATUS ESPOS@/PAREJA"] || null; if (!name && !birth) return null; return { name: name?name.toString().trim():null, gender: gender?gender.toString().trim():null, birthDate: birth?birth.toString().trim():null, applicant: applicant?applicant.toString().trim():null, status: status?status.toString().trim():null, raw: `${name||''} ${gender||''} ${birth||''} ${applicant||''} ${status||''}`.trim() }; }
+    function getChildrenInfo(record) { let children = []; for(let i=1;i<=20;i++) { let name = record[`NOMBRE HIJO ${i}`]; let gender = record[`GENERO HIJO ${i}`]; let birth = record[`FECHA DE NACIMIENTO HIJO ${i}`]; let applicant = record[`APLICANTE HIJO ${i}`]; let status = record[`ESTATUS HIJO ${i}`]; if(!name && !birth && !gender && !applicant && !status) continue; children.push({ numero:i, nombre: name?name.toString().trim():null, genero: gender?gender.toString().trim():null, fechaRaw: birth?birth.toString().trim():null, aplicante: applicant?applicant.toString().trim():null, estatus: status?status.toString().trim():null }); } return children; }
+    function getFamilyInfo(record) { return { spouse: getSpouseInfo(record), children: getChildrenInfo(record) }; }
+    
+    function getEfectividad(record) {
+        const posibles = ["EFECTIVIDAD SEGURO", "EFECTIVIDAD DEL SEGURO", "Efectividad", "efectividad"];
+        for (let campo of posibles) {
+            if (record[campo] && record[campo].toString().trim() !== "") {
+                return record[campo].toString().trim();
+            }
+        }
+        return null;
+    }
+    
+    // Función corregida: busca en "TITULAR APLICANTE" y también en "APLICANTE"
+    function esAplicante(record) {
+        let aplicante = record["TITULAR APLICANTE"];
+        if (aplicante === undefined || aplicante === null || aplicante === "") {
+            aplicante = record["APLICANTE"]; // fallback
+        }
+        if (aplicante === undefined || aplicante === null || aplicante === "") return "No especificado";
+        const valor = String(aplicante).trim().toUpperCase();
+        if (valor === "SI" || valor === "SÍ") return "Sí";
+        if (valor === "NO") return "No";
+        return aplicante; // muestra el valor original si no es reconocido
+    }
+    
+    function updateBirthdayNotifier() {
+        const container = document.getElementById("birthdayList");
+        if (!rawData.length) { container.innerHTML = '<div class="empty-birthday">Cargando datos...</div>'; return; }
+        const activeClients = rawData.filter(r => isActive(r["ESTATUS SEGURO"]));
+        if (activeClients.length === 0) { container.innerHTML = '<div class="empty-birthday">No hay clientes activos</div>'; return; }
+        const today = new Date(); today.setHours(0,0,0,0);
+        const todayMonth = today.getMonth(), todayDay = today.getDate();
+        const birthdaysToday = [];
+        activeClients.forEach(client => {
+            const clientPhone = client["TELEFONO"] || client["TELÉFONO"] || null;
+            let titularName = client["NOMBRE Y APELLIDO"] || "Titular";
+            let titularBirth = client["FECHA DE NACIMIENTO"] || client["FECHA NACIMIENTO"] || null;
+            if(titularBirth) { let pd = parseDate(titularBirth); if(pd && pd.getMonth()===todayMonth && pd.getDate()===todayDay) { let age = today.getFullYear()-pd.getFullYear(); let bdThis = new Date(today.getFullYear(), pd.getMonth(), pd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: titularName, relation:"Titular", age:age, phone:clientPhone, fullName: titularName }); } }
+            const family = getFamilyInfo(client);
+            if(family.spouse && family.spouse.birthDate) { let sd = parseDate(family.spouse.birthDate); if(sd && sd.getMonth()===todayMonth && sd.getDate()===todayDay) { let age = today.getFullYear()-sd.getFullYear(); let bdThis = new Date(today.getFullYear(), sd.getMonth(), sd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: family.spouse.name||"Espos@", relation:"Espos@", age:age, phone:clientPhone, fullName: family.spouse.name||"Espos@" }); } }
+            family.children.forEach(child => { if(child.fechaRaw) { let cd = parseDate(child.fechaRaw); if(cd && cd.getMonth()===todayMonth && cd.getDate()===todayDay) { let age = today.getFullYear()-cd.getFullYear(); let bdThis = new Date(today.getFullYear(), cd.getMonth(), cd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: child.nombre||`Hijo ${child.numero}`, relation:`Hijo/a ${child.numero}`, age:age, phone:clientPhone, fullName: child.nombre||`Hijo ${child.numero}` }); } } });
         });
+        if(birthdaysToday.length===0) { container.innerHTML = '<div class="empty-birthday">🎉 No hay cumpleaños hoy</div>'; return; }
+        let html = '';
+        birthdaysToday.forEach(b => { let waBtn = b.phone ? `<button class="birthday-wa-btn" data-phone="${escapeHtml(b.phone)}" data-name="${escapeHtml(b.fullName)}"><i class="fab fa-whatsapp"></i> Felicitar</button>` : `<button class="birthday-wa-btn" disabled><i class="fab fa-whatsapp"></i> Sin número</button>`; html += `<div class="birthday-item"><i class="fas fa-cake-candles birthday-icon"></i><span class="birthday-name">${escapeHtml(b.name)}</span><span class="birthday-relation">(${b.relation})</span><span class="birthday-date">🎂 ${b.age} años</span><span class="birthday-days">¡Hoy!</span>${waBtn}</div>`; });
+        container.innerHTML = html;
+        document.querySelectorAll('.birthday-wa-btn').forEach(btn => { if(btn.disabled) return; btn.addEventListener('click',(e)=>{ e.stopPropagation(); const phone=btn.getAttribute('data-phone'); const name=btn.getAttribute('data-name'); if(phone&&name) openBirthdayWhatsApp(phone,name); }); });
     }
-
-    function isActive(status) {
-        return status && String(status).toLowerCase().includes("activo");
-    }
-
-    function getPrimaValue(record) {
-        let prima = record["PRIMA"];
-        if (prima === undefined || prima === null || prima === "") return 0;
-        let num = parseFloat(prima);
-        return isNaN(num) ? 0 : num;
-    }
-
+    
     async function fetchData() {
         try {
             showLoading(true);
-            // Timeout de 15 segundos
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(()=>controller.abort(),15000);
             const resp = await fetch(API_URL, { signal: controller.signal });
             clearTimeout(timeoutId);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status} - ${resp.statusText}`);
+            if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const json = await resp.json();
-            if (!json.OBAMACARE || !Array.isArray(json.OBAMACARE) || json.OBAMACARE.length < 2) {
-                throw new Error("El formato de datos no es el esperado. Falta 'OBAMACARE' o no tiene filas.");
-            }
+            if(!json.OBAMACARE || !Array.isArray(json.OBAMACARE) || json.OBAMACARE.length<2) throw new Error("Formato incorrecto");
             const [headers, ...rows] = json.OBAMACARE;
-            const records = rows.map(row => {
-                let obj = {};
-                headers.forEach((h,i) => obj[h] = row[i] ?? "");
-                return obj;
-            }).filter(r => Object.values(r).some(v => v !== ""));
-            if (records.length === 0) throw new Error("No hay registros en los datos.");
+            const records = rows.map(row=>{ let obj={}; headers.forEach((h,i)=>obj[h]=row[i]??""); return obj; }).filter(r=>Object.values(r).some(v=>v!==""));
+            if(records.length===0) throw new Error("No hay registros");
             rawData = sortByName(records);
-            updateKPIs();
-            updateSummaryCards();
-            updateResponsablesList();
-            populateFilters();
-            applyFilters();
-            closeDetailPanel();
-            selectedRecord = null;
-            showLoading(false);
-        } catch(err) {
-            console.error("Error en fetchData:", err);
-            document.getElementById("tableBody").innerHTML = `<tr><td colspan="3" style="color: #ff7e5e;">⚠️ Error: ${err.message}. Verifica la URL o la conexión.</td></tr>`;
-            showLoading(false);
-        }
+            updateKPIs(); updateSummaryCards(); updateResponsablesList(); populateFilters(); updateBirthdayNotifier();
+            applyFilters(); closeDetailPanel(); selectedRecord=null; showLoading(false);
+        } catch(err) { console.error(err); document.getElementById("tableBody").innerHTML=`<tr><td colspan="4">Error: ${err.message}</td></tr>`; showLoading(false); }
     }
-
-    function showLoading(isLoad) {
-        const btn = document.getElementById("refreshDataBtn");
-        if(isLoad) { btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Cargando...'; btn.disabled = true; }
-        else { btn.innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar'; btn.disabled = false; }
-    }
-
-    function updateKPIs() {
-        if(!rawData.length) return;
-        const active = rawData.filter(r => isActive(r["ESTATUS SEGURO"]));
-        const totalActive = active.length;
-        const companies = new Set();
-        let totalMembers = 0;
-        const responsables = new Set();
-        active.forEach(r => {
-            if(r["COMPAÑIA"]) companies.add(r["COMPAÑIA"].trim());
-            let m = parseInt(r["N° Miembros"]); if(!isNaN(m)) totalMembers += m;
-            if(r["RESPONSABLE"]) responsables.add(r["RESPONSABLE"].trim());
-        });
-        document.getElementById("totalActive").innerText = totalActive;
-        document.getElementById("totalCompanies").innerText = companies.size;
-        document.getElementById("totalMembers").innerText = totalMembers;
-        document.getElementById("totalResp").innerText = responsables.size;
-    }
-
+    function showLoading(isLoad) { const btn=document.getElementById("refreshDataBtn"); if(isLoad){ btn.innerHTML='<i class="fas fa-spinner fa-pulse"></i> Cargando...'; btn.disabled=true; } else { btn.innerHTML='<i class="fas fa-sync-alt"></i> Actualizar'; btn.disabled=false; } }
+    function updateKPIs() { if(!rawData.length) return; const active=rawData.filter(r=>isActive(r["ESTATUS SEGURO"])); const totalActive=active.length; const companies=new Set(); let totalMembers=0; const responsables=new Set(); active.forEach(r=>{ if(r["COMPAÑIA"]) companies.add(r["COMPAÑIA"].trim()); let m=parseInt(r["N° Miembros"]); if(!isNaN(m)) totalMembers+=m; if(r["RESPONSABLE"]) responsables.add(r["RESPONSABLE"].trim()); }); document.getElementById("totalActive").innerText=totalActive; document.getElementById("totalCompanies").innerText=companies.size; document.getElementById("totalMembers").innerText=totalMembers; document.getElementById("totalResp").innerText=responsables.size; }
     function updateSummaryCards() {
         if(!rawData.length) return;
-        const statusMap = {};
-        rawData.forEach(r => { let st = r["ESTATUS SEGURO"]?.trim() || "Sin especificar"; statusMap[st] = (statusMap[st]||0)+1; });
-        const sortedStatus = Object.entries(statusMap).sort((a,b)=>b[1]-a[1]);
-        document.getElementById("statusSummaryList").innerHTML = sortedStatus.map(([k,v])=>`<div class="summary-item"><span class="summary-label">${k}</span><span class="summary-value">${v}</span></div>`).join("");
-        const active = rawData.filter(r => isActive(r["ESTATUS SEGURO"]));
-        const compMap = {};
-        active.forEach(r => { let c = r["COMPAÑIA"]?.trim(); if(c) compMap[c] = (compMap[c]||0)+1; });
-        const sortedComp = Object.entries(compMap).sort((a,b)=>b[1]-a[1]);
-        let compHtml = '';
-        sortedComp.forEach(([k,v]) => {
-            const { color, icon } = getCompanyStyle(k);
-            let label = k;
-            if (icon) label += ` ${icon}`;
-            const style = color !== 'inherit' ? `style="color: ${color};"` : '';
-            compHtml += `<div class="summary-item"><span class="summary-label" ${style}>${label}</span><span class="summary-value">${v}</span></div>`;
-        });
-        document.getElementById("companySummaryList").innerHTML = compHtml;
-        const stateMap = {};
-        active.forEach(r => { let state = r["ESTADO"]?.trim() || r["STATE"]?.trim() || "Desconocido"; if(state) stateMap[state] = (stateMap[state]||0)+1; });
-        const sortedState = Object.entries(stateMap).sort((a,b)=>b[1]-a[1]);
-        const top7State = sortedState.slice(0,7);
-        document.getElementById("stateSummaryList").innerHTML = top7State.map(([k,v])=>`<div class="summary-item"><span class="summary-label">${k}</span><span class="summary-value">${v}</span></div>`).join("");
+        const statusMap={};
+        rawData.forEach(r=>{ let st=r["ESTATUS SEGURO"]?.trim()||"Sin especificar"; statusMap[st]=(statusMap[st]||0)+1; });
+        const sortedStatus=Object.entries(statusMap).sort((a,b)=>b[1]-a[1]);
+        document.getElementById("statusSummaryList").innerHTML=sortedStatus.map(([k,v])=>`<div class="summary-item"><span class="summary-label">${escapeHtml(toTitleCase(k))}</span><span class="summary-value">${v}</span></div>`).join("");
+        
+        const active=rawData.filter(r=>isActive(r["ESTATUS SEGURO"]));
+        const compMap={};
+        active.forEach(r=>{ let c=r["COMPAÑIA"]?.trim(); if(c) compMap[c]=(compMap[c]||0)+1; });
+        const sortedComp=Object.entries(compMap).sort((a,b)=>b[1]-a[1]);
+        let compHtml='';
+        sortedComp.forEach(([k,v])=>{ const{color}=getCompanyStyle(k); const style=color!=='inherit'?`style="color: ${color};"`:''; compHtml+=`<div class="summary-item"><span class="summary-label" ${style}>${escapeHtml(toTitleCase(k))}</span><span class="summary-value">${v}</span></div>`; });
+        document.getElementById("companySummaryList").innerHTML=compHtml;
+        
+        const stateMap={};
+        active.forEach(r=>{ let state=r["ESTADO"]?.trim()||r["STATE"]?.trim()||"Desconocido"; if(state) stateMap[state]=(stateMap[state]||0)+1; });
+        const sortedState=Object.entries(stateMap).sort((a,b)=>b[1]-a[1]);
+        const top7State=sortedState.slice(0,7);
+        document.getElementById("stateSummaryList").innerHTML=top7State.map(([k,v])=>`<div class="summary-item"><span class="summary-label">${escapeHtml(toTitleCase(k))}</span><span class="summary-value">${v}</span></div>`).join("");
     }
-
-    function updateResponsablesList() {
-        const container = document.getElementById("agentsList");
-        if(!rawData.length) { container.innerHTML = "Cargando..."; return; }
-        const active = rawData.filter(r => isActive(r["ESTATUS SEGURO"]));
-        const total = active.length;
-        const map = new Map();
-        active.forEach(r => {
-            let resp = r["RESPONSABLE"]?.trim();
-            if(resp) {
-                if(!map.has(resp)) map.set(resp, {clientes:0, miembros:0});
-                let d = map.get(resp);
-                d.clientes++;
-                let mem = parseInt(r["N° Miembros"]);
-                if(!isNaN(mem)) d.miembros += mem;
-            }
-        });
-        const sorted = Array.from(map.entries()).map(([name,d])=>({name, clientes:d.clientes, miembros:d.miembros, part: total? (d.clientes/total*100):0})).sort((a,b)=>b.clientes-a.clientes);
-        if(sorted.length===0) { container.innerHTML = "<div class='agent-mini'>Sin responsables</div>"; return; }
-        let html = "";
-        sorted.forEach(a => {
-            html += `<div class="agent-mini">
-                        <div class="agent-mini-name">${escapeHtml(a.name)}</div>
-                        <div class="agent-mini-stats">
-                            <span>${a.clientes}</span> clientes · <span>${a.miembros}</span> miembros · <span>${a.part.toFixed(1)}%</span>
-                        </div>
-                    </div>`;
-        });
-        container.innerHTML = html;
-    }
-
+    function updateResponsablesList() { const container=document.getElementById("agentsList"); if(!rawData.length){ container.innerHTML="Cargando..."; return; } const active=rawData.filter(r=>isActive(r["ESTATUS SEGURO"])); const map=new Map(); active.forEach(r=>{ let resp=r["RESPONSABLE"]?.trim(); if(resp){ if(!map.has(resp)) map.set(resp,{clientes:0,miembros:0}); let d=map.get(resp); d.clientes++; let mem=parseInt(r["N° Miembros"]); if(!isNaN(mem)) d.miembros+=mem; } }); const sorted=Array.from(map.entries()).map(([name,d])=>({name, clientes:d.clientes, miembros:d.miembros})).sort((a,b)=>b.clientes-a.clientes); if(sorted.length===0){ container.innerHTML="<div class='agent-mini'>Sin responsables</div>"; return; } let html=""; sorted.forEach(a=>{ html+=`<div class="agent-mini"><div class="agent-mini-name">${escapeHtml(toTitleCase(a.name))}</div><div class="agent-mini-stats"><span>${a.clientes}</span> clientes · <span>${a.miembros}</span> miembros</div></div>`; }); container.innerHTML=html; }
     function populateFilters() {
-        const companies = new Set(), respSet = new Set();
-        const rawStatuses = new Set();
-        rawData.forEach(r => {
-            if(r["COMPAÑIA"]) companies.add(r["COMPAÑIA"].trim());
-            if(r["RESPONSABLE"]) respSet.add(r["RESPONSABLE"].trim());
-            let st = r["ESTATUS SEGURO"]?.trim();
-            if(st) rawStatuses.add(st);
-        });
-        const statusOptions = [];
-        const hasActive = Array.from(rawStatuses).some(s => s.toLowerCase().includes("activo"));
-        if (hasActive) statusOptions.push({ value: "Activo", label: "ACTIVO" });
-        const hasTerminated = Array.from(rawStatuses).some(s => s.toLowerCase().includes("terminado") || s.toLowerCase().includes("cancelado"));
-        if (hasTerminated) statusOptions.push({ value: "Terminado", label: "TERMINADO" });
-        const otherStatuses = Array.from(rawStatuses).filter(s => {
-            const low = s.toLowerCase();
+        const companies=new Set(), respSet=new Set(), rawStatuses=new Set();
+        rawData.forEach(r=>{ if(r["COMPAÑIA"]) companies.add(r["COMPAÑIA"].trim()); if(r["RESPONSABLE"]) respSet.add(r["RESPONSABLE"].trim()); let st=r["ESTATUS SEGURO"]?.trim(); if(st) rawStatuses.add(st); });
+        const statusOptions=[];
+        if(Array.from(rawStatuses).some(s=>s.toLowerCase().includes("activo"))) statusOptions.push({value:"Activo",label:"Activo"});
+        if(Array.from(rawStatuses).some(s=>s.toLowerCase().includes("terminado")||s.toLowerCase().includes("cancelado"))) statusOptions.push({value:"Terminado",label:"Terminado"});
+        Array.from(rawStatuses).filter(s=>{
+            const low=s.toLowerCase();
             return !low.includes("activo") && !low.includes("terminado") && !low.includes("cancelado");
-        }).sort();
-        otherStatuses.forEach(s => statusOptions.push({ value: s, label: s.toUpperCase() }));
-        const statusSelect = document.getElementById("statusFilter");
-        statusSelect.innerHTML = '<option value="">TODOS</option>';
-        statusOptions.forEach(opt => {
-            statusSelect.innerHTML += `<option value="${escapeHtml(opt.value)}">${escapeHtml(opt.label)}</option>`;
+        }).sort().forEach(s=>{
+            const formatted = toTitleCase(s);
+            statusOptions.push({value:s, label:formatted});
         });
-        const companySelect = document.getElementById("companyFilter");
-        const respSelect = document.getElementById("respFilter");
-        companySelect.innerHTML = '<option value="">Todas</option>';
-        respSelect.innerHTML = '<option value="">Todos</option>';
-        [...companies].sort().forEach(c => companySelect.innerHTML += `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`);
-        [...respSet].sort().forEach(r => respSelect.innerHTML += `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`);
+        const statusSelect=document.getElementById("statusFilter");
+        statusSelect.innerHTML='<option value="">TODOS</option>';
+        statusOptions.forEach(opt=>statusSelect.innerHTML+=`<option value="${escapeHtml(opt.value)}">${escapeHtml(opt.label)}</option>`);
+        const companySelect=document.getElementById("companyFilter"), respSelect=document.getElementById("respFilter");
+        companySelect.innerHTML='<option value="">Todas</option>';
+        respSelect.innerHTML='<option value="">Todos</option>';
+        [...companies].sort().forEach(c=>companySelect.innerHTML+=`<option value="${escapeHtml(c)}">${escapeHtml(toTitleCase(c))}</option>`);
+        [...respSet].sort().forEach(r=>respSelect.innerHTML+=`<option value="${escapeHtml(r)}">${escapeHtml(toTitleCase(r))}</option>`);
     }
-
-    function escapeHtml(str) { return String(str).replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-    function applyFilters() {
-        const search = document.getElementById("searchInput").value.toLowerCase();
-        const comp = document.getElementById("companyFilter").value;
-        const statusFilterValue = document.getElementById("statusFilter").value;
-        const resp = document.getElementById("respFilter").value;
-        const primaFilter = document.getElementById("primaFilter").value;
-        filteredData = rawData.filter(r => {
-            if(comp && (r["COMPAÑIA"]?.trim() !== comp)) return false;
-            if(resp && (r["RESPONSABLE"]?.trim() !== resp)) return false;
-            if (statusFilterValue) {
-                const recordStatus = r["ESTATUS SEGURO"]?.trim() || "";
-                const lowStatus = recordStatus.toLowerCase();
-                if (statusFilterValue === "Activo") {
-                    if (!lowStatus.includes("activo")) return false;
-                } else if (statusFilterValue === "Terminado") {
-                    if (!(lowStatus.includes("terminado") || lowStatus.includes("cancelado"))) return false;
+    function applyFilters() { const search=document.getElementById("searchInput").value.toLowerCase(); const comp=document.getElementById("companyFilter").value; const statusFilterValue=document.getElementById("statusFilter").value; const resp=document.getElementById("respFilter").value; const primaFilter=document.getElementById("primaFilter").value; filteredData=rawData.filter(r=>{ if(comp && (r["COMPAÑIA"]?.trim()!==comp)) return false; if(resp && (r["RESPONSABLE"]?.trim()!==resp)) return false; if(statusFilterValue){ const rs=r["ESTATUS SEGURO"]?.trim()||""; const low=rs.toLowerCase(); if(statusFilterValue==="Activo"){ if(!low.includes("activo")) return false; } else if(statusFilterValue==="Terminado"){ if(!(low.includes("terminado")||low.includes("cancelado"))) return false; } else { if(rs!==statusFilterValue) return false; } } if(primaFilter==="pagan"){ if(getPrimaValue(r)<=0) return false; } else if(primaFilter==="no_pagan"){ if(getPrimaValue(r)>0) return false; } if(search && !Object.values(r).join(" ").toLowerCase().includes(search)) return false; return true; }); filteredData=sortByName(filteredData); currentPage=1; if(selectedRecord && !filteredData.some(r=>r===selectedRecord)){ selectedRecord=null; closeDetailPanel(); } renderTable(); if(selectedRecord){ openDetailPanel(); renderClientDetail(selectedRecord); updateDetailTitle(selectedRecord); } }
+    function clearFilters() { document.getElementById("searchInput").value=""; document.getElementById("companyFilter").value=""; document.getElementById("statusFilter").value=""; document.getElementById("respFilter").value=""; document.getElementById("primaFilter").value=""; selectedRecord=null; closeDetailPanel(); applyFilters(); }
+    function renderTable() { const limitVal=document.getElementById("rowsPerPageSelect").value; rowsPerPage=limitVal==="all"?filteredData.length:parseInt(limitVal,10); const totalPages=rowsPerPage===filteredData.length?1:Math.ceil(filteredData.length/rowsPerPage); if(currentPage>totalPages) currentPage=totalPages||1; const start=(currentPage-1)*rowsPerPage; const end=Math.min(start+rowsPerPage,filteredData.length); const pageRows=filteredData.slice(start,end); const tbody=document.getElementById("tableBody"); tbody.innerHTML=""; if(pageRows.length===0){ tbody.innerHTML='<tr><td colspan="4">No hay resultados</td></tr>'; } pageRows.forEach(rec=>{ const tr=document.createElement("tr"); if(selectedRecord===rec) tr.classList.add("selected-row"); tr.addEventListener("click",(e)=>{ if(e.target.closest('.btn-wa-table')||e.target.closest('.btn-wa2-table')||e.target.closest('.btn-appointment-table')) return; selectedRecord=rec; renderTable(); openDetailPanel(); renderClientDetail(rec); updateDetailTitle(rec); }); const name=rec["NOMBRE Y APELLIDO"]||"—"; const companyName=rec["COMPAÑIA"]||"—"; const members=rec["N° Miembros"]||"—"; const phone=rec["TELEFONO"]||rec["TELÉFONO"]||""; const primerNombre=name.split(' ')[0]; const tdName=createTd(name); const tdCompany=createTd(toTitleCase(companyName)); const{color}=getCompanyStyle(companyName); if(color!=='inherit') tdCompany.style.color=color; const tdMembers=createTd(members); const tdActions=document.createElement("td"); 
+            const waBtn=document.createElement("button"); waBtn.innerHTML='<i class="fab fa-whatsapp"></i> Enviar'; waBtn.className="btn-wa-table"; waBtn.addEventListener("click",(e)=>{ e.stopPropagation(); openWhatsApp(phone, getWhatsAppMessage(primerNombre)); });
+            const wa2Btn=document.createElement("button"); wa2Btn.innerHTML='<i class="fas fa-hand-peace"></i> Saludar'; wa2Btn.className="btn-wa2-table"; wa2Btn.addEventListener("click",(e)=>{ e.stopPropagation(); openWhatsApp(phone, getWhatsAppMessage2(primerNombre)); });
+            const appBtn=document.createElement("button"); appBtn.innerHTML='<i class="fas fa-calendar-alt"></i> Cita'; appBtn.className="btn-appointment-table"; appBtn.addEventListener("click",(e)=>{ e.stopPropagation(); pendingAppointment.phone=phone; pendingAppointment.record=rec; showAppointmentModal(); });
+            tdActions.appendChild(waBtn); tdActions.appendChild(wa2Btn); tdActions.appendChild(appBtn);
+            tr.appendChild(tdName); tr.appendChild(tdCompany); tr.appendChild(tdMembers); tr.appendChild(tdActions); tbody.appendChild(tr);
+        }); const prevBtn=document.getElementById("prevPageBtn"), nextBtn=document.getElementById("nextPageBtn"), pageInfo=document.getElementById("pageInfo"); const isAll=(document.getElementById("rowsPerPageSelect").value==="all"); if(isAll){ prevBtn.disabled=true; nextBtn.disabled=true; pageInfo.innerText=`Mostrando todos los ${filteredData.length} registros`; } else { prevBtn.disabled=(currentPage===1); nextBtn.disabled=(currentPage===totalPages||totalPages===0); pageInfo.innerText=`Página ${currentPage} de ${totalPages||1}`; } }
+    function createTd(txt){ const td=document.createElement("td"); td.innerText=txt; return td; }
+    function openDetailPanel(){ document.getElementById("detailPanel").classList.add("open"); }
+    function closeDetailPanel(){ document.getElementById("detailPanel").classList.remove("open"); document.getElementById("detailTitle").textContent="Responsable: --"; }
+    function updateDetailTitle(record){ const responsable=record["RESPONSABLE"]?.trim(); document.getElementById("detailTitle").textContent=responsable?`Responsable: ${escapeHtml(toTitleCase(responsable))}`:"Responsable: Sin asignar"; }
+    function renderClientDetail(record) {
+        const container=document.getElementById("clientDetail");
+        if(!record){ container.innerHTML='<div class="empty-message">Selecciona un aplicante</div>'; return; }
+        
+        const efectividadRaw = getEfectividad(record);
+        const efectividadFormatted = efectividadRaw ? formatDateToMDY(efectividadRaw) : null;
+        let efectividadHtml = efectividadFormatted ? `<div class="detail-item"><div class="detail-label">Efectividad del seguro</div><div class="detail-value">${escapeHtml(efectividadFormatted)}</div></div>` : "";
+        
+        const aplicanteValue = esAplicante(record);
+        
+        const accesoCompania = record["ACCESO A COMPAÑIA"] || "";
+        let emailCreado = record["E-MAIL CREADO"] || "";
+        let portalHtml = "";
+        if(accesoCompania || emailCreado){
+            portalHtml = `<div class="detail-section"><h4><i class="fas fa-globe"></i> Portal / Email</h4><div class="detail-grid">`;
+            if(accesoCompania) portalHtml += `<div class="detail-item"><div class="detail-label">Acceso a compañía</div><div class="detail-value">${escapeHtml(accesoCompania)}</div></div>`;
+            if(emailCreado) {
+                if(emailCreado.toUpperCase().includes("USER:") || emailCreado.toUpperCase().includes("CLAVE:")) {
+                    portalHtml += `<div class="detail-item"><div class="detail-label">Acceso al portal (usuario/clave)</div><div class="detail-value">${escapeHtml(emailCreado)}</div></div>`;
                 } else {
-                    if (recordStatus !== statusFilterValue) return false;
+                    portalHtml += `<div class="detail-item"><div class="detail-label">E-mail creado</div><div class="detail-value">${escapeHtml(emailCreado)}</div></div>`;
                 }
             }
-            if (primaFilter === "pagan") {
-                if (getPrimaValue(r) <= 0) return false;
-            } else if (primaFilter === "no_pagan") {
-                if (getPrimaValue(r) > 0) return false;
+            portalHtml += `</div></div>`;
+        }
+        
+        let html = `<div class="detail-section"><h4>Información del Cliente</h4><div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Nombre</div><div class="detail-value">${escapeHtml(record["NOMBRE Y APELLIDO"]||"-")}</div></div>
+            <div class="detail-item"><div class="detail-label">Aplicante</div><div class="detail-value">${escapeHtml(aplicanteValue)}</div></div>
+            <div class="detail-item"><div class="detail-label">SSN</div><div class="detail-value">${escapeHtml(record["SSN"]||record["SOCIAL SECURITY"]||"-")}</div></div>
+            <div class="detail-item"><div class="detail-label">Nacimiento</div><div class="detail-value">${formatDateToMDY(record["FECHA DE NACIMIENTO"]||record["FECHA NACIMIENTO"])||"-"}</div></div>
+            <div class="detail-item"><div class="detail-label">Teléfono</div><div class="detail-value">${escapeHtml(record["TELEFONO"]||record["TELÉFONO"]||"-")}</div></div>
+            <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value">${escapeHtml(record["E-MAIL CLIENTE"]||record["EMAIL"]||"-")}</div></div>
+        </div></div>
+        <div class="detail-section"><h4>Ubicación</h4><div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Dirección</div><div class="detail-value">${escapeHtml(record["DIRECCION"]||"-")}</div></div>
+            <div class="detail-item"><div class="detail-label">Zip</div><div class="detail-value">${escapeHtml(record["ZIP CODE"]||record["ZIP"]||"-")}</div></div>
+            <div class="detail-item"><div class="detail-label">Estado</div><div class="detail-value">${escapeHtml(toTitleCase(record["ESTADO"]||record["STATE"]||"-"))}</div></div>
+        </div></div>
+        <div class="detail-section"><h4>Seguro</h4><div class="detail-grid">
+            <div class="detail-item"><div class="detail-label">Compañía</div><div class="detail-value" style="color:${getCompanyStyle(record["COMPAÑIA"]).color}">${escapeHtml(toTitleCase(record["COMPAÑIA"]||"-"))}</div></div>
+            <div class="detail-item"><div class="detail-label">Plan</div><div class="detail-value">${escapeHtml(record["PLAN"]||"-")}</div></div>
+            <div class="detail-item"><div class="detail-label">Member ID</div><div class="detail-value">${escapeHtml(record["MEMBER ID"]||"-")}</div></div>
+            <div class="detail-item"><div class="detail-label">Prima</div><div class="detail-value">${record["PRIMA"]?`$${parseFloat(record["PRIMA"]).toFixed(2)}`:"-"}</div></div>
+            <div class="detail-item"><div class="detail-label">Estatus</div><div class="detail-value">${escapeHtml(toTitleCase(record["ESTATUS SEGURO"]||"-"))}</div></div>
+            ${efectividadHtml}
+        </div></div>`;
+        
+        if(portalHtml) html += portalHtml;
+        
+        const family=getFamilyInfo(record);
+        let familyHtml=`<div class="detail-section"><h4>Familiares</h4><div class="detail-grid">`;
+        if(family.spouse){ let txt=""; if(family.spouse.name) txt+=`Nombre: ${family.spouse.name}`; if(family.spouse.gender) txt+= (txt?" | ":"")+`Género: ${family.spouse.gender}`; if(family.spouse.birthDate) txt+= (txt?" | ":"")+`Nacimiento: ${formatDateToMDY(family.spouse.birthDate)}`; if(family.spouse.applicant) txt+= (txt?" | ":"")+`Aplicante: ${family.spouse.applicant}`; if(family.spouse.status) txt+= (txt?" | ":"")+`Estatus: ${family.spouse.status}`; familyHtml+=`<div class="detail-item"><div class="detail-label">Espos@/Pareja</div><div class="detail-value">${escapeHtml(txt||"Información disponible")}</div></div>`; }
+        family.children.forEach(child=>{ let txt=""; if(child.nombre) txt+=`Nombre: ${child.nombre}`; if(child.genero) txt+= (txt?" | ":"")+`Género: ${child.genero}`; if(child.fechaRaw) txt+= (txt?" | ":"")+`Nacimiento: ${formatDateToMDY(child.fechaRaw)}`; if(child.aplicante) txt+= (txt?" | ":"")+`Aplicante: ${child.aplicante}`; if(child.estatus) txt+= (txt?" | ":"")+`Estatus: ${child.estatus}`; familyHtml+=`<div class="detail-item"><div class="detail-label">Hijo ${child.numero}</div><div class="detail-value">${escapeHtml(txt||"Información disponible")}</div></div>`; });
+        if(!family.spouse && family.children.length===0) familyHtml+=`<div class="detail-item"><div class="detail-label">Sin información</div><div class="detail-value">No se encontraron familiares registrados</div></div>`;
+        familyHtml+=`</div></div>`;
+        html+=familyHtml;
+        const phone=record["TELEFONO"]||record["TELÉFONO"]||"";
+        const primerNombre=(record["NOMBRE Y APELLIDO"]||"").split(' ')[0];
+        html+=`<div class="detail-section"><button class="btn-wa-detail" id="waDetailBtn"><i class="fab fa-whatsapp"></i> Enviar mensaje (semana)</button>
+                 <button class="btn-wa2-detail" id="wa2DetailBtn"><i class="fas fa-hand-peace"></i> Enviar saludo personal</button>
+                 <button class="btn-appointment-detail" id="appointmentDetailBtn"><i class="fas fa-calendar-alt"></i> Agendar cita médica</button></div>`;
+        container.innerHTML=html;
+        document.getElementById("waDetailBtn")?.addEventListener("click",()=>openWhatsApp(phone, getWhatsAppMessage(primerNombre)));
+        document.getElementById("wa2DetailBtn")?.addEventListener("click",()=>openWhatsApp(phone, getWhatsAppMessage2(primerNombre)));
+        document.getElementById("appointmentDetailBtn")?.addEventListener("click",()=>{ pendingAppointment.phone=phone; pendingAppointment.record=record; showAppointmentModal(); });
+    }
+    function goPrevPage(){ if(currentPage>1){ currentPage--; renderTable(); if(selectedRecord){ const start=(currentPage-1)*rowsPerPage; const end=start+rowsPerPage; if(!filteredData.slice(start,end).includes(selectedRecord)){ selectedRecord=null; closeDetailPanel(); } else { openDetailPanel(); renderClientDetail(selectedRecord); updateDetailTitle(selectedRecord); } } } }
+    function goNextPage(){ const totalPages=rowsPerPage===filteredData.length?1:Math.ceil(filteredData.length/rowsPerPage); if(currentPage<totalPages){ currentPage++; renderTable(); if(selectedRecord){ const start=(currentPage-1)*rowsPerPage; const end=start+rowsPerPage; if(!filteredData.slice(start,end).includes(selectedRecord)){ selectedRecord=null; closeDetailPanel(); } else { openDetailPanel(); renderClientDetail(selectedRecord); updateDetailTitle(selectedRecord); } } } }
+    const modal = document.getElementById("appointmentModal");
+    function showAppointmentModal() {
+        if(!pendingAppointment.record) { alert("Error: no se ha seleccionado un cliente."); return; }
+        const record = pendingAppointment.record;
+        const family = getFamilyInfo(record);
+        const patientSelect = document.getElementById("patientSelect");
+        patientSelect.innerHTML = '<option value="">Seleccionar paciente...</option>';
+        const titularName = record["NOMBRE Y APELLIDO"] || "Titular";
+        const titularOption = document.createElement("option");
+        titularOption.value = titularName;
+        titularOption.textContent = `${titularName} (Titular)`;
+        patientSelect.appendChild(titularOption);
+        if(family.spouse && family.spouse.name) {
+            const spouseOption = document.createElement("option");
+            spouseOption.value = family.spouse.name;
+            spouseOption.textContent = `${family.spouse.name} (Espos@)`;
+            patientSelect.appendChild(spouseOption);
+        } else if(family.spouse && !family.spouse.name && family.spouse.raw) {
+            const spouseOption = document.createElement("option");
+            spouseOption.value = family.spouse.raw.split(' ')[0];
+            spouseOption.textContent = `${family.spouse.raw.substring(0,30)} (Espos@)`;
+            patientSelect.appendChild(spouseOption);
+        }
+        family.children.forEach(child => {
+            if(child.nombre) {
+                const childOption = document.createElement("option");
+                childOption.value = child.nombre;
+                childOption.textContent = `${child.nombre} (Hijo/a ${child.numero})`;
+                patientSelect.appendChild(childOption);
             }
-            if(search && !Object.values(r).join(" ").toLowerCase().includes(search)) return false;
-            return true;
         });
-        filteredData = sortByName(filteredData);
-        if(selectedRecord && !filteredData.some(r => r === selectedRecord)) {
-            selectedRecord = null;
-            closeDetailPanel();
-        }
-        renderTable();
-        if(selectedRecord) {
-            openDetailPanel();
-            renderClientDetail(selectedRecord);
-            updateDetailTitle(selectedRecord);
-        }
+        modal.style.display = "flex";
     }
-
-    function clearFilters() {
-        document.getElementById("searchInput").value = "";
-        document.getElementById("companyFilter").value = "";
-        document.getElementById("statusFilter").value = "";
-        document.getElementById("respFilter").value = "";
-        document.getElementById("primaFilter").value = "";
-        selectedRecord = null;
-        closeDetailPanel();
-        applyFilters();
-    }
-
-    function renderTable() {
-        const limitVal = document.getElementById("rowsPerPageSelect").value;
-        currentLimit = limitVal === "all" ? filteredData.length : parseInt(limitVal);
-        const rows = filteredData.slice(0, currentLimit);
-        const tbody = document.getElementById("tableBody");
-        tbody.innerHTML = "";
-        if(rows.length === 0) { tbody.innerHTML = '<tr><td colspan="3">No hay resultados con los filtros actuales</td></tr>'; return; }
-        rows.forEach(rec => {
-            const tr = document.createElement("tr");
-            if(selectedRecord === rec) tr.classList.add("selected-row");
-            tr.addEventListener("click", () => {
-                selectedRecord = rec;
-                renderTable();
-                openDetailPanel();
-                renderClientDetail(rec);
-                updateDetailTitle(rec);
-            });
-            const name = rec["NOMBRE Y APELLIDO"] || "—";
-            const companyName = rec["COMPAÑIA"] || "—";
-            const members = rec["N° Miembros"] || "—";
-            const tdName = createTd(name);
-            const tdCompany = createTd(companyName);
-            const { color, icon } = getCompanyStyle(companyName);
-            if (color !== 'inherit') tdCompany.style.color = color;
-            if (icon) tdCompany.innerHTML = `${escapeHtml(companyName)} ${icon}`;
-            const tdMembers = createTd(members);
-            tr.appendChild(tdName);
-            tr.appendChild(tdCompany);
-            tr.appendChild(tdMembers);
-            tbody.appendChild(tr);
-        });
-    }
-    function createTd(txt) { const td = document.createElement("td"); td.innerText = txt; return td; }
-
-    function openDetailPanel() { document.getElementById("detailPanel").classList.add("open"); }
-    function closeDetailPanel() { document.getElementById("detailPanel").classList.remove("open"); const titleElem = document.getElementById("detailTitle"); titleElem.textContent = "Responsable: --"; }
-    function updateDetailTitle(record) { const responsable = record["RESPONSABLE"]?.trim(); const titleElem = document.getElementById("detailTitle"); titleElem.textContent = responsable ? `Responsable: ${escapeHtml(responsable)}` : "Responsable: Sin asignar"; }
-
-    function formatDate(value) { if (!value) return "-"; let d = new Date(value); if (!isNaN(d.getTime())) return d.toLocaleDateString('es-ES'); return value; }
-
-    function renderClientDetail(record) {
-        const container = document.getElementById("clientDetail");
-        if (!record) { container.innerHTML = '<div class="empty-message">Selecciona un aplicante para ver su información</div>'; return; }
-        let html = '';
-        // Personal
-        html += `<div class="detail-section"><h4>👤 Información del Cliente</h4><div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">Nombre del Cliente</div><div class="detail-value">${escapeHtml(record["NOMBRE Y APELLIDO"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Identificación (SSN)</div><div class="detail-value">${escapeHtml(record["SSN"] || record["SOCIAL SECURITY"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Fecha de Nacimiento</div><div class="detail-value">${formatDate(record["FECHA DE NACIMIENTO"] || record["FECHA NACIMIENTO"])}</div></div>
-            <div class="detail-item"><div class="detail-label">Teléfono de Contacto</div><div class="detail-value">${escapeHtml(record["TELEFONO"] || record["TELÉFONO"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Correo Electrónico</div><div class="detail-value">${escapeHtml(record["E-MAIL CLIENTE"] || record["EMAIL"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Estatus Legal</div><div class="detail-value">${escapeHtml(record["ESTATUS LEGAL"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">¿Es Titular Aplicante?</div><div class="detail-value">${escapeHtml(record["TITULAR APLICANTE"] || record["APLICANTE"] || "-")}</div></div>
-        </div></div>`;
-        // Ubicación
-        html += `<div class="detail-section"><h4>📍 Ubicación del Cliente</h4><div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">Dirección Domiciliaria</div><div class="detail-value">${escapeHtml(record["DIRECCION"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Código Postal</div><div class="detail-value">${escapeHtml(record["ZIP CODE"] || record["ZIP"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Estado</div><div class="detail-value">${escapeHtml(record["ESTADO"] || record["STATE"] || "-")}</div></div>
-        </div></div>`;
-        // Seguro
-        const companyName = record["COMPAÑIA"] || "-";
-        const { color, icon } = getCompanyStyle(companyName);
-        let companyHtml = escapeHtml(companyName);
-        if (icon) companyHtml += ` ${icon}`;
-        const companyStyle = color !== 'inherit' ? `style="color: ${color};"` : '';
-        let primaValue = record["PRIMA"];
-        let primaDisplay = (primaValue !== undefined && primaValue !== "" && !isNaN(parseFloat(primaValue))) ? `$${parseFloat(primaValue).toFixed(2)}` : "-";
-        let estatusPoliza = record["ESTATUS SEGURO"] || "-";
-        let efectividad = record["EFECTIVIDAD"] || record["EFECTIVIDAD SEGURO"] || "-";
-        html += `<div class="detail-section"><h4>🏥 Información del Seguro</h4><div class="detail-grid">
-            <div class="detail-item"><div class="detail-label">Compañía Aseguradora</div><div class="detail-value" ${companyStyle}>${companyHtml}</div></div>
-            <div class="detail-item"><div class="detail-label">Nombre de la Póliza / Plan</div><div class="detail-value">${escapeHtml(record["PLAN"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Número de Miembro</div><div class="detail-value">${escapeHtml(record["MEMBER ID"] || "-")}</div></div>
-            <div class="detail-item"><div class="detail-label">Prima Mensual</div><div class="detail-value">${primaDisplay}</div></div>
-            <div class="detail-item"><div class="detail-label">Estatus de la Póliza</div><div class="detail-value">${escapeHtml(estatusPoliza)}</div></div>
-            <div class="detail-item"><div class="detail-label">Fecha de Efectividad</div><div class="detail-value">${formatDate(efectividad)}</div></div>
-        </div></div>`;
-        // Familiares
-        html += `<div class="detail-section"><h4>👥 Información de Familiares</h4>`;
-        const spouseName = record["ESPOS@/PAREJA"] || record["ESPOSA"] || record["ESPOSO"];
-        if (spouseName && spouseName.trim()) {
-            html += `<div class="family-block"><div class="family-title">Espos@ / Pareja</div><div class="family-grid">
-                <div class="detail-item"><div class="detail-label">Nombre</div><div class="detail-value">${escapeHtml(spouseName)}</div></div>
-                <div class="detail-item"><div class="detail-label">Género</div><div class="detail-value">${escapeHtml(record["GENERO ESPOS@/PAREJA"] || "-")}</div></div>
-                <div class="detail-item"><div class="detail-label">Fecha de Nacimiento</div><div class="detail-value">${formatDate(record["FECHA DE NACIMIENTO ESPOS@/PAREJA"] || "-")}</div></div>
-                <div class="detail-item"><div class="detail-label">¿Es Aplicante?</div><div class="detail-value">${escapeHtml(record["APLICANTE ESPOS@/PAREJA"] || "-")}</div></div>
-                <div class="detail-item"><div class="detail-label">Estatus / SSN</div><div class="detail-value">${escapeHtml(record["ESTATUS ESPOS@/PAREJA"] || "-")}</div></div>
-            </div></div>`;
-        }
-        for (let i=1; i<=5; i++) {
-            const childName = record[`NOMBRE HIJO ${i}`];
-            if (childName && childName.trim()) {
-                html += `<div class="family-block"><div class="family-title">Hijo ${i}</div><div class="family-grid">
-                    <div class="detail-item"><div class="detail-label">Nombre</div><div class="detail-value">${escapeHtml(childName)}</div></div>
-                    <div class="detail-item"><div class="detail-label">Género</div><div class="detail-value">${escapeHtml(record[`GENERO HIJO ${i}`] || "-")}</div></div>
-                    <div class="detail-item"><div class="detail-label">Fecha de Nacimiento</div><div class="detail-value">${formatDate(record[`FECHA DE NACIMIENTO HIJO ${i}`] || "-")}</div></div>
-                    <div class="detail-item"><div class="detail-label">¿Es Aplicante?</div><div class="detail-value">${escapeHtml(record[`APLICANTE HIJO ${i}`] || "-")}</div></div>
-                    <div class="detail-item"><div class="detail-label">Estatus / SSN</div><div class="detail-value">${escapeHtml(record[`ESTATUS HIJO ${i}`] || "-")}</div></div>
-                </div></div>`;
-            }
-        }
-        if (!spouseName && !record["NOMBRE HIJO 1"]) html += `<div class="empty-message">No se registraron familiares</div>`;
-        html += `</div>`;
-        container.innerHTML = html;
-    }
-
-    // Event listeners
+    function hideAppointmentModal() { modal.style.display = "none"; document.getElementById("appointmentForm").reset(); pendingAppointment.record = null; pendingAppointment.phone = null; }
+    document.getElementById("closeModalBtn").addEventListener("click", hideAppointmentModal);
+    document.getElementById("cancelModalBtn").addEventListener("click", hideAppointmentModal);
+    window.addEventListener("click", (e) => { if(e.target === modal) hideAppointmentModal(); });
+    document.getElementById("appointmentForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const patientName = document.getElementById("patientSelect").value;
+        const type = document.getElementById("appointmentType").value;
+        const doctorName = document.getElementById("doctorName").value.trim();
+        const date = document.getElementById("appointmentDate").value.trim();
+        const time = document.getElementById("appointmentTime").value.trim();
+        const address = document.getElementById("appointmentAddress").value.trim();
+        const clinicPhone = document.getElementById("clinicPhone").value.trim();
+        if(!patientName) { alert("Seleccione el paciente."); return; }
+        if(!doctorName) { alert("Ingrese el nombre del médico."); return; }
+        if(!date || !time || !address || !clinicPhone) { alert("Por favor complete todos los campos."); return; }
+        const message = getAppointmentMessage(patientName, doctorName, type, date, time, address, clinicPhone);
+        if(pendingAppointment.phone) {
+            openWhatsApp(pendingAppointment.phone, message);
+            hideAppointmentModal();
+        } else { alert("No hay número de teléfono del cliente."); }
+    });
     document.getElementById("refreshDataBtn").addEventListener("click", fetchData);
     document.getElementById("searchInput").addEventListener("input", applyFilters);
     document.getElementById("companyFilter").addEventListener("change", applyFilters);
@@ -888,13 +985,11 @@
     document.getElementById("respFilter").addEventListener("change", applyFilters);
     document.getElementById("primaFilter").addEventListener("change", applyFilters);
     document.getElementById("clearFiltersBtn").addEventListener("click", clearFilters);
-    document.getElementById("rowsPerPageSelect").addEventListener("change", renderTable);
+    document.getElementById("rowsPerPageSelect").addEventListener("change", () => { currentPage = 1; renderTable(); });
+    document.getElementById("prevPageBtn").addEventListener("click", goPrevPage);
+    document.getElementById("nextPageBtn").addEventListener("click", goNextPage);
     document.getElementById("closeDetailBtn").addEventListener("click", closeDetailPanel);
-    document.getElementById("themeToggle").addEventListener("click", () => {
-        document.body.classList.toggle("light");
-        const icon = document.getElementById("themeToggle").querySelector("i");
-        icon.className = document.body.classList.contains("light") ? "fas fa-sun" : "fas fa-moon";
-    });
+    document.getElementById("themeToggle").addEventListener("click", () => { document.body.classList.toggle("light"); const icon = document.getElementById("themeToggle").querySelector("i"); icon.className = document.body.classList.contains("light") ? "fas fa-sun" : "fas fa-moon"; });
     window.addEventListener("DOMContentLoaded", fetchData);
 </script>
 </body>
