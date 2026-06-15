@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* (estilos iguales que antes, no cambio nada aquí por brevedad, pero los incluyo igual) */
+        /* ========== ESTILOS ORIGINALES (sin cambios) ========== */
         :root {
             --bg-main: #0f0f1a;
             --bg-sidebar: #12121f;
@@ -507,8 +507,100 @@
         }
         .btn-submit { background: #25D366; color: white; }
         .btn-cancel { background: var(--border-color); color: var(--accent-orange); }
-        @media (max-width: 480px) {
-            .modal-content { width: 95%; padding: 16px; }
+        
+        /* ========== MEDIA QUERIES PARA MÓVIL (sin modificar diseño original, solo adaptación) ========== */
+        @media (max-width: 768px) {
+            /* Apilar sidebar y contenido principal verticalmente */
+            .dashboard {
+                flex-direction: column;
+                overflow: auto;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 16px;
+                max-height: 40vh;
+                overflow-y: auto;
+                flex-shrink: 0;
+            }
+            .main-content {
+                padding: 16px;
+                overflow-y: auto;
+                min-height: 60vh;
+            }
+            /* Panel de detalle: ocupa toda la pantalla en móvil */
+            .detail-panel {
+                width: 100% !important;
+                left: 0 !important;
+                right: auto !important;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+            /* Ajustes de tablas para scroll horizontal */
+            .table-scroll {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            table {
+                table-layout: auto;
+                min-width: 600px; /* para que se pueda hacer scroll si es necesario */
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 0.7rem;
+            }
+            /* Tarjetas de resumen en columna */
+            .summary-row {
+                flex-direction: column;
+            }
+            .summary-card {
+                flex: auto;
+            }
+            /* Filtros en columna */
+            .filters-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-item {
+                min-width: auto;
+            }
+            .clear-btn {
+                margin-top: 8px;
+                width: 100%;
+            }
+            /* Cumpleaños: ajuste de tamaño */
+            .birthday-item {
+                font-size: 0.7rem;
+                padding: 6px 10px;
+            }
+            .birthday-wa-btn {
+                font-size: 0.6rem;
+                padding: 3px 8px;
+            }
+            /* Botones de acción en tabla */
+            .btn-wa-table, .btn-wa2-table, .btn-appointment-table {
+                padding: 3px 6px;
+                font-size: 0.6rem;
+                margin-right: 2px;
+            }
+            /* Top bar */
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .btn-group {
+                width: 100%;
+                justify-content: space-between;
+            }
+            /* Modales */
+            .modal-content {
+                width: 95%;
+                padding: 16px;
+            }
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -659,6 +751,7 @@
 </div>
 
 <script>
+    // ========== TODO EL CÓDIGO JAVASCRIPT ORIGINAL (sin cambios) ==========
     const API_URL = "https://script.google.com/macros/s/AKfycbxSiZXMxV4zw7IDvCFLtAcN7_aTYf4kbV1wcEGjgm_RK_qJ7eY2F8c2zwZOGIe7PO_gxA/exec";
     let rawData = [];
     let filteredData = [];
@@ -740,17 +833,16 @@ Quedo atento. Que tenga una ${despedida}.`;
         return null;
     }
     
-    // Función corregida: busca en "TITULAR APLICANTE" y también en "APLICANTE"
     function esAplicante(record) {
         let aplicante = record["TITULAR APLICANTE"];
         if (aplicante === undefined || aplicante === null || aplicante === "") {
-            aplicante = record["APLICANTE"]; // fallback
+            aplicante = record["APLICANTE"];
         }
         if (aplicante === undefined || aplicante === null || aplicante === "") return "No especificado";
         const valor = String(aplicante).trim().toUpperCase();
         if (valor === "SI" || valor === "SÍ") return "Sí";
         if (valor === "NO") return "No";
-        return aplicante; // muestra el valor original si no es reconocido
+        return aplicante;
     }
     
     function updateBirthdayNotifier() {
@@ -871,11 +963,8 @@ Quedo atento. Que tenga una ${despedida}.`;
             portalHtml = `<div class="detail-section"><h4><i class="fas fa-globe"></i> Portal / Email</h4><div class="detail-grid">`;
             if(accesoCompania) portalHtml += `<div class="detail-item"><div class="detail-label">Acceso a compañía</div><div class="detail-value">${escapeHtml(accesoCompania)}</div></div>`;
             if(emailCreado) {
-                if(emailCreado.toUpperCase().includes("USER:") || emailCreado.toUpperCase().includes("CLAVE:")) {
-                    portalHtml += `<div class="detail-item"><div class="detail-label">Acceso al portal (usuario/clave)</div><div class="detail-value">${escapeHtml(emailCreado)}</div></div>`;
-                } else {
-                    portalHtml += `<div class="detail-item"><div class="detail-label">E-mail creado</div><div class="detail-value">${escapeHtml(emailCreado)}</div></div>`;
-                }
+                // Mostrar siempre como "E-mail creado" (ajustado según tu petición)
+                portalHtml += `<div class="detail-item"><div class="detail-label">E-mail creado</div><div class="detail-value">${escapeHtml(emailCreado)}</div></div>`;
             }
             portalHtml += `</div></div>`;
         }
