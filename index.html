@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* ========== ESTILOS ORIGINALES (sin cambios en diseño ni textos) ========== */
+        /* ========== ESTILOS (sin cambios) ========== */
         :root {
             --bg-main: #0f0f1a;
             --bg-sidebar: #12121f;
@@ -27,6 +27,9 @@
             --input-border: #2a2a3c;
             --agent-bg: #16162a;
             --birthday-bg: #2a1e2a;
+            --btn-enviado: #f59e0b;
+            --btn-reenviar: #3b82f6;
+            --btn-disabled: #4a4a5a;
         }
         body.light {
             --bg-main: #f0f2f5;
@@ -47,6 +50,9 @@
             --input-border: #cbd5e1;
             --agent-bg: #f8fafc;
             --birthday-bg: #fef3c7;
+            --btn-enviado: #f59e0b;
+            --btn-reenviar: #3b82f6;
+            --btn-disabled: #cbd5e1;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { height: 100%; }
@@ -290,6 +296,14 @@
             margin-right: 5px;
             margin-bottom: 3px;
         }
+        .btn-wa-table.enviado { background: var(--btn-enviado); cursor: default; opacity: 0.7; }
+        .btn-wa-table.reenviar { background: var(--btn-reenviar); }
+        .btn-wa-table.reenviar:hover { background: #2563eb; }
+        .btn-wa-table.disabled { background: var(--btn-disabled); cursor: not-allowed; opacity: 0.5; }
+        .btn-wa2-table.enviado { background: var(--btn-enviado); cursor: default; opacity: 0.7; }
+        .btn-wa2-table.reenviar { background: var(--btn-reenviar); }
+        .btn-wa2-table.reenviar:hover { background: #2563eb; }
+        .btn-wa2-table.disabled { background: var(--btn-disabled); cursor: not-allowed; opacity: 0.5; }
         .btn-wa-table { background: #25D366; }
         .btn-wa-table:hover { background: #128C7E; }
         .btn-wa2-table { background: #34B7F1; }
@@ -320,7 +334,6 @@
         .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
         .pagination button:hover:not(:disabled) { background: var(--accent-orange); color: white; border-color: var(--accent-orange); }
         .page-info { font-size: 0.8rem; color: var(--text-secondary); }
-        /* Panel de detalle: en escritorio lateral, en móvil bloque debajo de la tabla */
         .detail-panel {
             position: fixed;
             right: 0;
@@ -393,7 +406,7 @@
             font-size: 1.1rem;
         }
         .btn-group { display: flex; gap: 10px; }
-        .theme-toggle, .refresh-btn {
+        .theme-toggle, .refresh-btn, .sync-btn {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             padding: 6px 16px;
@@ -403,6 +416,7 @@
             font-weight: 500;
             font-size: 0.7rem;
         }
+        .sync-btn { color: var(--accent-purple); }
         .btn-wa-detail, .btn-wa2-detail, .btn-appointment-detail {
             border: none;
             padding: 8px 16px;
@@ -508,107 +522,32 @@
         }
         .btn-submit { background: #25D366; color: white; }
         .btn-cancel { background: var(--border-color); color: var(--accent-orange); }
-        
-        /* ========== RESPONSIVE PARA MÓVIL ========== */
+        .estado-icono {
+            font-size: 0.8rem;
+            margin-left: 4px;
+        }
         @media (max-width: 768px) {
-            .dashboard {
-                flex-direction: column;
-                overflow: auto;
-            }
-            .sidebar {
-                width: 100%;
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-                padding: 16px;
-                max-height: 40vh;
-                overflow-y: auto;
-                flex-shrink: 0;
-            }
-            .main-content {
-                padding: 16px;
-                overflow-y: auto;
-            }
-            .detail-panel {
-                position: relative;
-                width: 100%;
-                height: auto;
-                max-height: none;
-                transform: none;
-                transition: none;
-                border-left: none;
-                margin-top: 20px;
-                border-radius: 24px;
-                box-shadow: none;
-                display: none;
-            }
-            .detail-panel.open {
-                display: flex;
-                transform: none;
-            }
-            .detail-header {
-                position: sticky;
-                top: 0;
-                background: var(--card-bg);
-                z-index: 10;
-                border-radius: 24px 24px 0 0;
-            }
-            .table-scroll {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            table {
-                min-width: 600px;
-                table-layout: auto;
-            }
-            th, td {
-                padding: 8px 10px;
-                font-size: 0.7rem;
-            }
-            .summary-row {
-                flex-direction: column;
-            }
-            .summary-card {
-                flex: auto;
-            }
-            .filters-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .filter-item {
-                min-width: auto;
-            }
-            .clear-btn {
-                margin-top: 8px;
-                width: 100%;
-            }
-            .birthday-item {
-                font-size: 0.7rem;
-                padding: 6px 10px;
-            }
-            .birthday-wa-btn {
-                font-size: 0.6rem;
-                padding: 3px 8px;
-            }
-            .btn-wa-table, .btn-wa2-table, .btn-appointment-table {
-                padding: 3px 6px;
-                font-size: 0.6rem;
-                margin-right: 2px;
-            }
-            .top-bar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .btn-group {
-                width: 100%;
-                justify-content: space-between;
-            }
-            .modal-content {
-                width: 95%;
-                padding: 16px;
-            }
-            .detail-grid {
-                grid-template-columns: 1fr;
-            }
+            .dashboard { flex-direction: column; overflow: auto; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border-color); padding: 16px; max-height: 40vh; overflow-y: auto; flex-shrink: 0; }
+            .main-content { padding: 16px; overflow-y: auto; }
+            .detail-panel { position: relative; width: 100%; height: auto; max-height: none; transform: none; transition: none; border-left: none; margin-top: 20px; border-radius: 24px; box-shadow: none; display: none; }
+            .detail-panel.open { display: flex; transform: none; }
+            .detail-header { position: sticky; top: 0; background: var(--card-bg); z-index: 10; border-radius: 24px 24px 0 0; }
+            .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            table { min-width: 600px; table-layout: auto; }
+            th, td { padding: 8px 10px; font-size: 0.7rem; }
+            .summary-row { flex-direction: column; }
+            .summary-card { flex: auto; }
+            .filters-row { flex-direction: column; align-items: stretch; }
+            .filter-item { min-width: auto; }
+            .clear-btn { margin-top: 8px; width: 100%; }
+            .birthday-item { font-size: 0.7rem; padding: 6px 10px; }
+            .birthday-wa-btn { font-size: 0.6rem; padding: 3px 8px; }
+            .btn-wa-table, .btn-wa2-table, .btn-appointment-table { padding: 3px 6px; font-size: 0.6rem; margin-right: 2px; }
+            .top-bar { flex-direction: column; align-items: flex-start; }
+            .btn-group { width: 100%; justify-content: space-between; }
+            .modal-content { width: 95%; padding: 16px; }
+            .detail-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -636,6 +575,7 @@
             <h2><i class="fas fa-chart-simple"></i> RESUMEN EJECUTIVO</h2>
             <div class="btn-group">
                 <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> Modo claro/oscuro</button>
+                <button class="sync-btn" id="syncAppointmentsBtn"><i class="fas fa-cloud-download-alt"></i> Sincronizar</button>
                 <button class="refresh-btn" id="refreshDataBtn"><i class="fas fa-sync-alt"></i> Actualizar</button>
             </div>
         </div>
@@ -658,6 +598,17 @@
         <div class="birthday-card" id="birthdayNotifier">
             <h3><i class="fas fa-birthday-cake birthday-icon"></i> Cumpleaños de Hoy</h3>
             <div id="birthdayList" class="birthday-list">Cargando...</div>
+        </div>
+
+        <!-- NOTIFICADOR DE CITAS CON HISTORIAL -->
+        <div class="birthday-card" id="appointmentNotifier" style="margin-top: 10px;">
+            <h3><i class="fas fa-calendar-check"></i> Historial / Próximas Citas <span id="appointmentBadge" class="birthday-days" style="background: var(--accent-coral);">0</span></h3>
+            <div id="appointmentList" class="birthday-list">
+                <div class="empty-birthday">No hay citas registradas</div>
+            </div>
+            <small style="color: var(--text-muted); font-size: 0.6rem; margin-top: 8px; display: block;">
+                <i class="fas fa-info-circle"></i> Las citas se conservan hasta que las elimines con el botón <strong>×</strong>.
+            </small>
         </div>
 
         <div class="filters-row">
@@ -698,7 +649,6 @@
             </div>
         </div>
 
-        <!-- Panel de detalle: ahora se mostrará debajo de la tabla en móvil -->
         <div class="detail-panel" id="detailPanel">
             <div class="detail-header"><h3 id="detailTitle">Responsable: --</h3><button class="close-detail" id="closeDetailBtn"><i class="fas fa-times"></i></button></div>
             <div class="detail-content" id="clientDetail"><div class="empty-message">Selecciona un aplicante para ver su información</div></div>
@@ -706,6 +656,7 @@
     </div>
 </div>
 
+<!-- ========== MODAL DE CITAS CON CAMPO DINÁMICO ========== -->
 <div id="appointmentModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
@@ -728,7 +679,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Médico (MD)</label>
+                <label id="doctorLabel">Médico (MD)</label>
                 <input type="text" id="doctorName" placeholder="Nombre del médico que atenderá" required>
             </div>
             <div class="form-group">
@@ -760,7 +711,16 @@
 </div>
 
 <script>
-    // ========== CÓDIGO JAVASCRIPT (con la función getAppointmentMessage modificada) ==========
+    // ============================================================
+    // CONFIGURACIÓN - URL PARA REGISTRO DE MENSAJES DE WHATSAPP
+    // ============================================================
+    const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbxkXZa96ZYJ7SycnAycu-K7n0X-ENRF4l6hmVUQKaUfuEKOeXgR2FBFtUgTS7FEZGbpOA/exec";
+
+    // ============================================================
+    // CONFIGURACIÓN - URL DE CITAS (Google Apps Script)
+    // ============================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyRhXNNhvyOgDZezIYun21IsW6oQ0mjLd9YxYYnMDKVmy2uvz2XwmS_tBbzAGEqpox6/exec";
+
     const API_URL = "https://script.google.com/macros/s/AKfycbxSiZXMxV4zw7IDvCFLtAcN7_aTYf4kbV1wcEGjgm_RK_qJ7eY2F8c2zwZOGIe7PO_gxA/exec";
     let rawData = [];
     let filteredData = [];
@@ -768,37 +728,308 @@
     let currentPage = 1;
     let rowsPerPage = 10;
     let pendingAppointment = { phone: null, record: null };
+    
+    // ========== ESTADO DE ENVÍOS ==========
+    let historialEnvios = {};
 
+    // ========== CONSULTAR HISTORIAL DE ENVÍOS ==========
+    async function cargarHistorialEnvios() {
+        try {
+            const url = REGISTRO_URL + '?action=getAll';
+            const resp = await fetch(url);
+            if (!resp.ok) return;
+            const data = await resp.json();
+            if (data.success && data.data) {
+                data.data.forEach(entry => {
+                    const telefono = entry.telefono || '';
+                    if (!telefono) return;
+                    if (!historialEnvios[telefono]) {
+                        historialEnvios[telefono] = {};
+                    }
+                    const tipo = entry.mensaje || '';
+                    if (tipo === 'Enviar' || tipo === 'Saludar') {
+                        if (!historialEnvios[telefono][tipo] || 
+                            new Date(entry.fecha) > new Date(historialEnvios[telefono][tipo].fecha)) {
+                            historialEnvios[telefono][tipo] = {
+                                fecha: entry.fecha,
+                                recordatorio: entry.recordatorio,
+                                mensaje: entry.mensaje
+                            };
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.warn('Error al cargar historial de envíos:', error);
+        }
+    }
+
+    // ========== VERIFICAR ESTADO DE ENVÍO ==========
+    function getEstadoEnvio(telefono, tipo) {
+        if (!telefono || !historialEnvios[telefono]) return null;
+        const registro = historialEnvios[telefono][tipo];
+        if (!registro) return null;
+        if (registro.recordatorio) {
+            try {
+                const partes = registro.recordatorio.split('/');
+                if (partes.length === 3) {
+                    const fechaRecordatorio = new Date(partes[2], partes[1]-1, partes[0]);
+                    const hoy = new Date();
+                    hoy.setHours(0,0,0,0);
+                    if (hoy >= fechaRecordatorio) {
+                        return 'reenviar';
+                    }
+                }
+            } catch(e) {}
+        }
+        return 'enviado';
+    }
+
+    // ========== REGISTRO DE MENSAJES EN SHEETS ==========
+    function registrarEnvioWhatsApp(titular, telefono, tipoMensaje, responsable) {
+        if (!titular || !telefono) {
+            console.warn('Faltan datos para registrar el envío');
+            return;
+        }
+        const payload = {
+            titular: titular,
+            telefono: telefono,
+            mensaje: tipoMensaje,
+            responsable: responsable || 'Sin asignar',
+            fecha: new Date().toISOString()
+        };
+        fetch(REGISTRO_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        }).catch(err => console.warn('Error al registrar mensaje:', err));
+        if (!historialEnvios[telefono]) historialEnvios[telefono] = {};
+        historialEnvios[telefono][tipoMensaje] = {
+            fecha: new Date().toISOString(),
+            recordatorio: null
+        };
+    }
+
+    // ========== FUNCIONES PARA ENVIAR Y REGISTRAR ==========
+    function enviarYRegistrar(record, tipo) {
+        const phone = record["TELEFONO"] || record["TELÉFONO"] || "";
+        if (!phone) {
+            alert("No hay número de teléfono registrado para este cliente.");
+            return;
+        }
+        const estado = getEstadoEnvio(phone, tipo);
+        if (estado === 'enviado') {
+            alert(`⚠️ Ya se envió un mensaje "${tipo}" a este cliente. Debes esperar 15 días para reenviar.`);
+            return;
+        }
+        const titular = record["NOMBRE Y APELLIDO"] || "Cliente";
+        const responsable = record["RESPONSABLE"] || "";
+        let mensaje = "";
+        if (tipo === "Enviar") {
+            mensaje = getWhatsAppMessage(titular.split(' ')[0]);
+        } else if (tipo === "Saludar") {
+            mensaje = getWhatsAppMessage2(titular.split(' ')[0]);
+        } else if (tipo === "Cumpleaños") {
+            mensaje = getBirthdayWhatsAppMessage(titular.split(' ')[0]);
+        } else {
+            return;
+        }
+        console.log("📩 Mensaje a enviar (texto original):", mensaje);
+        registrarEnvioWhatsApp(titular, phone, tipo, responsable);
+        openWhatsApp(phone, mensaje);
+        setTimeout(() => {
+            cargarHistorialEnvios().then(() => {
+                renderTable();
+                if (selectedRecord) {
+                    renderClientDetail(selectedRecord);
+                }
+            });
+        }, 1000);
+    }
+
+    // ========== NOTIFICADOR DE CITAS CON HISTORIAL ==========
+    let appointments = [];
+
+    function loadAppointments() {
+        const stored = localStorage.getItem('gef_appointments');
+        if (stored) {
+            try {
+                appointments = JSON.parse(stored);
+                appointments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            } catch (e) {
+                appointments = [];
+            }
+        }
+        renderAppointments();
+    }
+
+    function saveAppointments() {
+        localStorage.setItem('gef_appointments', JSON.stringify(appointments));
+    }
+
+    function addAppointment(titular, paciente, fecha) {
+        const newApp = {
+            id: Date.now() + Math.random(),
+            titular: titular || 'Sin titular',
+            paciente: paciente || 'Sin paciente',
+            fecha: fecha || 'Sin fecha',
+            timestamp: new Date().toISOString()
+        };
+        const exists = appointments.some(a => 
+            a.titular === newApp.titular && 
+            a.paciente === newApp.paciente && 
+            a.fecha === newApp.fecha
+        );
+        if (!exists) {
+            appointments.unshift(newApp);
+            if (appointments.length > 100) appointments.pop();
+            saveAppointments();
+            renderAppointments();
+        }
+    }
+
+    function removeAppointment(id) {
+        appointments = appointments.filter(a => a.id !== id);
+        saveAppointments();
+        renderAppointments();
+    }
+
+    function renderAppointments() {
+        const container = document.getElementById('appointmentList');
+        const badge = document.getElementById('appointmentBadge');
+        if (!container) return;
+        badge.textContent = appointments.length;
+        if (appointments.length === 0) {
+            container.innerHTML = '<div class="empty-birthday">No hay citas registradas</div>';
+            return;
+        }
+        let html = '';
+        const toShow = appointments.slice(0, 30);
+        toShow.forEach(app => {
+            let fechaMostrar = app.fecha;
+            try {
+                const partes = app.fecha.split('/');
+                if (partes.length === 3) {
+                    const d = new Date(partes[2], partes[1]-1, partes[0]);
+                    if (!isNaN(d)) {
+                        fechaMostrar = d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+                    }
+                }
+            } catch(e) {}
+            html += `
+                <div class="birthday-item" style="background: var(--card-bg); border-left: 3px solid var(--accent-coral);">
+                    <i class="fas fa-user" style="color: var(--accent-coral);"></i>
+                    <span class="birthday-name">${escapeHtml(app.titular)}</span>
+                    <span class="birthday-relation">→ ${escapeHtml(app.paciente)}</span>
+                    <span class="birthday-date">📅 ${escapeHtml(fechaMostrar)}</span>
+                    <button class="birthday-wa-btn" onclick="removeAppointment(${app.id})" style="background: #e74c3c; padding: 2px 8px;">
+                        <i class="fas fa-times"></i> Eliminar
+                    </button>
+                </div>
+            `;
+        });
+        if (appointments.length > 30) {
+            html += `<div class="birthday-item" style="background: transparent; border: none; color: var(--text-muted);">
+                <i class="fas fa-ellipsis-h"></i> Y ${appointments.length - 30} más...
+            </div>`;
+        }
+        container.innerHTML = html;
+    }
+
+    // ========== SINCRONIZACIÓN CON GOOGLE SHEETS (CITAS) ==========
+    async function syncAppointmentsFromSheet() {
+        try {
+            const url = SCRIPT_URL + '?action=get';
+            console.log('Intentando sincronizar con:', url);
+            const resp = await fetch(url);
+            console.log('Respuesta HTTP:', resp.status, resp.statusText);
+            if (!resp.ok) {
+                throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+            }
+            let result;
+            try {
+                result = await resp.json();
+            } catch (parseError) {
+                console.warn('La respuesta no es JSON. El script podría no estar listo o la URL es incorrecta.');
+                return;
+            }
+            console.log('Datos recibidos:', result);
+            if (result.success && result.data && result.data.length > 0) {
+                let addedCount = 0;
+                result.data.forEach(row => {
+                    const titular = row.Titular || 'Sin titular';
+                    const paciente = row.Paciente || 'Sin paciente';
+                    const fecha = row.Fecha || 'Sin fecha';
+                    const exists = appointments.some(a => 
+                        a.titular === titular && 
+                        a.paciente === paciente && 
+                        a.fecha === fecha
+                    );
+                    if (!exists) {
+                        appointments.push({
+                            id: Date.now() + Math.random() + addedCount,
+                            titular: titular,
+                            paciente: paciente,
+                            fecha: fecha,
+                            timestamp: row['Fecha de Solicitud'] || new Date().toISOString()
+                        });
+                        addedCount++;
+                    }
+                });
+                if (addedCount > 0) {
+                    appointments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    saveAppointments();
+                    renderAppointments();
+                    console.log(`✅ Se sincronizaron ${addedCount} citas históricas desde el Sheets.`);
+                } else {
+                    console.log('ℹ️ No se encontraron citas nuevas para sincronizar.');
+                }
+            } else {
+                console.log('⚠️ No se pudieron obtener citas del Sheets o está vacío.');
+            }
+        } catch (error) {
+            console.error('Error al sincronizar:', error);
+        }
+    }
+
+    // ========== MENSAJES CON EMOJIS COMPATIBLES CON WHATSAPP ESCRITORIO ==========
     function toTitleCase(str) {
         if (!str) return '';
         return str.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     }
 
-    function capitalizarNombre(nombre) { if (!nombre) return ""; return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase(); }
+    function capitalizarNombre(nombre) { 
+        if (!nombre) return ""; 
+        return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase(); 
+    }
     
+    // Mensaje "Enviar" – con ⭐ (estrella) que es compatible universalmente
     function getWhatsAppMessage(primerNombre) {
         const today = new Date();
         const dayOfWeek = today.getDay();
+        const estrella = "⭐";
         let saludo = "";
         let semanaTexto = "";
         if (dayOfWeek === 1) {
-            saludo = "🌟 ¡Feliz inicio de semana! 🌟";
+            saludo = `${estrella} Feliz inicio de semana! ${estrella}`;
             semanaTexto = "esta nueva semana";
         } else if (dayOfWeek >= 2 && dayOfWeek <= 4) {
-            saludo = "🌟 ¡Feliz semana! 🌟";
+            saludo = `${estrella} Feliz semana! ${estrella}`;
             semanaTexto = "estos días";
         } else {
-            saludo = "🌟 ¡Feliz fin de semana! 🌟";
+            saludo = `${estrella} Feliz fin de semana! ${estrella}`;
             semanaTexto = "este fin de semana";
         }
         return `${saludo}
 Esperamos que se encuentren muy bien y que ${semanaTexto} esté llena de salud, éxitos y bendiciones para usted y su familia.
 Queremos recordarle que cuenta con nuestro apoyo para coordinar cualquier cita médica, resolver dudas sobre su cobertura o brindarle la información que necesite relacionada con su seguro de salud.
 Estamos a su disposición para ayudarle y asegurarnos de que aproveche al máximo sus beneficios.
-¡Que tenga una excelente semana!
+Que tenga una excelente semana!
 Atentamente, su equipo de atención al cliente de GEF INSURANCE.`;
     }
     
+    // Mensaje "Saludar" – sin emojis, solo texto (máxima compatibilidad)
     function getWhatsAppMessage2(primerNombre) {
         const hours = new Date().getHours();
         const esManana = hours < 12;
@@ -811,29 +1042,73 @@ Le escribo para saludarlo y recordarle que estamos para brindarle nuestra ayuda 
 Quedo atento. Que tenga una ${despedida}.`;
     }
     
-    // ========== MENSAJE DE CITA MODIFICADO SEGÚN SOLICITUD ==========
-    function getAppointmentMessage(patientName, doctorName, type, date, time, address, clinicPhone) {
-        return `CITA AGENDADA
-PACIENTE: ${patientName}
-CITA: ${type}
-MD: ${doctorName}
-FECHA: ${date}
-HORA: ${time}
-DIRECCION: ${address}
-TELEFONO: ${clinicPhone}
-
-Se recomienda llevar historial medico si aplica.
-Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anticipación y reprogramar su cita al número que le enviamos, si no se le cobra un Bill, llevar ID, tarjeta del seguro.`;
-    }
-    // ========== FIN MODIFICACIÓN ==========
-
+    // Mensaje de cumpleaños – con emojis compatibles: 🎉 (confeti), 🎂 (pastel), 🎈 (globo), ❤️ (corazón)
     function getBirthdayWhatsAppMessage(personFirstName) {
         let firstNameUpper = personFirstName ? personFirstName.toUpperCase() : "AMIGO/A";
-        return `🎁 ¡HAPPY BIRTHDAY ${firstNameUpper}! Hoy es un día ESPECIAL y no quería dejar de FELICITARTE, deseándote SALUD y ÉXITO para ti en este día.\nEs por eso que ENGELBERTH BECERRA, tu Agente de SEGUROS, y su equipo lo saben.\n\n¡¡¡FELIZ CUMPLEAÑOS!!! Que lo pases ESPECTACULAR junto a tu FAMILIA 🥳🍻🍰🎈`;
+        return `🎉 HAPPY BIRTHDAY ${firstNameUpper}! 🎉
+Hoy es un día ESPECIAL y no quería dejar de FELICITARTE, deseándote SALUD y ÉXITO para ti en este día.
+Es por eso que ENGELBERTH BECERRA, tu Agente de SEGUROS, y su equipo lo saben.
+
+!!!FELIZ CUMPLEAÑOS!!! Que lo pases ESPECTACULAR junto a tu FAMILIA 🎂🎈❤️`;
     }
+
+    // ========== MENSAJE DE CITAS CON EMOJIS Y CAMPO DINÁMICO ==========
+    function getAppointmentMessage(patientName, doctorName, type, date, time, address, clinicPhone) {
+        // Si es "Examen", mostramos "CLINICA:" en lugar de "MD:"
+        const doctorLabel = type === "Examen" ? "🏥 CLINICA:" : "👨‍⚕️ MD:";
+        
+        let message = `📋 CITA AGENDADA
+👤 PACIENTE: ${patientName}
+🩺 TIPO: ${type}
+${doctorLabel} ${doctorName}
+📅 FECHA: ${date}
+🕐 HORA: ${time}
+📍 DIRECCION: ${address}
+📞 TELEFONO: ${clinicPhone}
+
+`;
+        message += `Se recomienda llevar historial médico si aplica. Llevar ID y tarjeta del seguro.
+Llegar 30 minutos antes de la cita, Si no puede asistir llamar 48 horas antes para reprogramar. Si no avisarnos para generar la cencalacion. Sino se cancela puede que le hagan un cobra un "Bill".`;
+
+        return message;
+    }
+
+    // ========== CONTROL DEL CAMPO DINÁMICO (Médico / Clínica) ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.getElementById('appointmentType');
+        const doctorLabel = document.getElementById('doctorLabel');
+        const doctorInput = document.getElementById('doctorName');
+
+        function updateDoctorField() {
+            const selected = typeSelect.value;
+            if (selected === 'Examen') {
+                doctorLabel.textContent = 'Clínica / Laboratorio';
+                doctorInput.placeholder = 'Nombre de la clínica o laboratorio';
+            } else {
+                doctorLabel.textContent = 'Médico (MD)';
+                doctorInput.placeholder = 'Nombre del médico que atenderá';
+            }
+        }
+
+        typeSelect.addEventListener('change', updateDoctorField);
+        // Ejecutar al cargar para que coincida con el valor inicial
+        updateDoctorField();
+    });
+
+    // ========== RESTO DE FUNCIONES ==========
     function getCompanyStyle(companyName) { if (!companyName) return { color: 'inherit' }; const name = companyName.trim().toLowerCase(); if (name === "oscar") return { color: '#14b8a6' }; if (name === "ambetter") return { color: '#f43f5e' }; if (name === "united healthcare" || name === "unitedhealthcare") return { color: '#3b82f6' }; if (name === "blue cross") return { color: '#3b82f6' }; if (name === "florida blue") return { color: '#60a5fa' }; if (name === "kaiser permanente") return { color: '#a78bfa' }; return { color: 'inherit' }; }
     function normalizePhone(phone) { if (!phone) return null; let cleaned = phone.toString().replace(/\D/g, ''); if (cleaned.length === 10) cleaned = '1' + cleaned; if (cleaned.length === 11 && cleaned.startsWith('1')) return '+' + cleaned; if (phone.toString().startsWith('+')) return phone.toString().replace(/\s/g, ''); return null; }
-    function openWhatsApp(phone, message) { if (!phone) { alert("No hay número de teléfono registrado para este cliente."); return; } const normalized = normalizePhone(phone); if (!normalized) { alert("El número de teléfono no tiene un formato válido. Debe tener 10 dígitos (EEUU) o incluir código de país."); return; } const encoded = encodeURIComponent(message); window.open(`https://wa.me/${normalized}?text=${encoded}`, '_blank'); }
+    
+    // URL con api.whatsapp.com para mejor compatibilidad con la app de escritorio
+    function openWhatsApp(phone, message) { 
+        if (!phone) { alert("No hay número de teléfono registrado para este cliente."); return; } 
+        const normalized = normalizePhone(phone); 
+        if (!normalized) { alert("El número de teléfono no tiene un formato válido. Debe tener 10 dígitos (EEUU) o incluir código de país."); return; } 
+        const encoded = encodeURIComponent(message); 
+        console.log("🔗 URL final:", `https://api.whatsapp.com/send?phone=${normalized}&text=${encoded}`); 
+        window.open(`https://api.whatsapp.com/send?phone=${normalized}&text=${encoded}`, '_blank'); 
+    }
+    
     function openBirthdayWhatsApp(phone, personFullName) { if (!phone) { alert("No hay número"); return; } let firstName = personFullName ? personFullName.split(' ')[0] : ""; const msg = getBirthdayWhatsAppMessage(firstName); openWhatsApp(phone, msg); }
     function sortByName(data) { return data.sort((a,b) => (a["NOMBRE Y APELLIDO"] || "").toLowerCase().localeCompare((b["NOMBRE Y APELLIDO"] || "").toLowerCase())); }
     function isActive(status) { return status && String(status).toLowerCase().includes("activo"); }
@@ -879,21 +1154,43 @@ Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anti
             const clientPhone = client["TELEFONO"] || client["TELÉFONO"] || null;
             let titularName = client["NOMBRE Y APELLIDO"] || "Titular";
             let titularBirth = client["FECHA DE NACIMIENTO"] || client["FECHA NACIMIENTO"] || null;
-            if(titularBirth) { let pd = parseDate(titularBirth); if(pd && pd.getMonth()===todayMonth && pd.getDate()===todayDay) { let age = today.getFullYear()-pd.getFullYear(); let bdThis = new Date(today.getFullYear(), pd.getMonth(), pd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: titularName, relation:"Titular", age:age, phone:clientPhone, fullName: titularName }); } }
+            if(titularBirth) { let pd = parseDate(titularBirth); if(pd && pd.getMonth()===todayMonth && pd.getDate()===todayDay) { let age = today.getFullYear()-pd.getFullYear(); let bdThis = new Date(today.getFullYear(), pd.getMonth(), pd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: titularName, relation:"Titular", age:age, phone:clientPhone, fullName: titularName, record: client }); } }
             const family = getFamilyInfo(client);
-            if(family.spouse && family.spouse.birthDate) { let sd = parseDate(family.spouse.birthDate); if(sd && sd.getMonth()===todayMonth && sd.getDate()===todayDay) { let age = today.getFullYear()-sd.getFullYear(); let bdThis = new Date(today.getFullYear(), sd.getMonth(), sd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: family.spouse.name||"Espos@", relation:"Espos@", age:age, phone:clientPhone, fullName: family.spouse.name||"Espos@" }); } }
-            family.children.forEach(child => { if(child.fechaRaw) { let cd = parseDate(child.fechaRaw); if(cd && cd.getMonth()===todayMonth && cd.getDate()===todayDay) { let age = today.getFullYear()-cd.getFullYear(); let bdThis = new Date(today.getFullYear(), cd.getMonth(), cd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: child.nombre||`Hijo ${child.numero}`, relation:`Hijo/a ${child.numero}`, age:age, phone:clientPhone, fullName: child.nombre||`Hijo ${child.numero}` }); } } });
+            if(family.spouse && family.spouse.birthDate) { let sd = parseDate(family.spouse.birthDate); if(sd && sd.getMonth()===todayMonth && sd.getDate()===todayDay) { let age = today.getFullYear()-sd.getFullYear(); let bdThis = new Date(today.getFullYear(), sd.getMonth(), sd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: family.spouse.name||"Espos@", relation:"Espos@", age:age, phone:clientPhone, fullName: family.spouse.name||"Espos@", record: client }); } }
+            family.children.forEach(child => { if(child.fechaRaw) { let cd = parseDate(child.fechaRaw); if(cd && cd.getMonth()===todayMonth && cd.getDate()===todayDay) { let age = today.getFullYear()-cd.getFullYear(); let bdThis = new Date(today.getFullYear(), cd.getMonth(), cd.getDate()); if(bdThis>today) age--; birthdaysToday.push({ name: child.nombre||`Hijo ${child.numero}`, relation:`Hijo/a ${child.numero}`, age:age, phone:clientPhone, fullName: child.nombre||`Hijo ${child.numero}`, record: client }); } } });
         });
         if(birthdaysToday.length===0) { container.innerHTML = '<div class="empty-birthday">🎉 No hay cumpleaños hoy</div>'; return; }
         let html = '';
-        birthdaysToday.forEach(b => { let waBtn = b.phone ? `<button class="birthday-wa-btn" data-phone="${escapeHtml(b.phone)}" data-name="${escapeHtml(b.fullName)}"><i class="fab fa-whatsapp"></i> Felicitar</button>` : `<button class="birthday-wa-btn" disabled><i class="fab fa-whatsapp"></i> Sin número</button>`; html += `<div class="birthday-item"><i class="fas fa-cake-candles birthday-icon"></i><span class="birthday-name">${escapeHtml(b.name)}</span><span class="birthday-relation">(${b.relation})</span><span class="birthday-date">🎂 ${b.age} años</span><span class="birthday-days">¡Hoy!</span>${waBtn}</div>`; });
+        birthdaysToday.forEach(b => {
+            let waBtn = b.phone ? 
+                `<button class="birthday-wa-btn" data-phone="${escapeHtml(b.phone)}" data-name="${escapeHtml(b.fullName)}" data-record='${JSON.stringify(b.record).replace(/'/g, "&#39;")}'><i class="fab fa-whatsapp"></i> Felicitar</button>` : 
+                `<button class="birthday-wa-btn" disabled><i class="fab fa-whatsapp"></i> Sin número</button>`;
+            html += `<div class="birthday-item"><i class="fas fa-cake-candles birthday-icon"></i><span class="birthday-name">${escapeHtml(b.name)}</span><span class="birthday-relation">(${b.relation})</span><span class="birthday-date">🎂 ${b.age} años</span><span class="birthday-days">¡Hoy!</span>${waBtn}</div>`;
+        });
         container.innerHTML = html;
-        document.querySelectorAll('.birthday-wa-btn').forEach(btn => { if(btn.disabled) return; btn.addEventListener('click',(e)=>{ e.stopPropagation(); const phone=btn.getAttribute('data-phone'); const name=btn.getAttribute('data-name'); if(phone&&name) openBirthdayWhatsApp(phone,name); }); });
+        document.querySelectorAll('.birthday-wa-btn').forEach(btn => {
+            if(btn.disabled) return;
+            btn.addEventListener('click',(e)=>{
+                e.stopPropagation();
+                const phone = btn.getAttribute('data-phone');
+                const name = btn.getAttribute('data-name');
+                const recordStr = btn.getAttribute('data-record');
+                if (phone && name) {
+                    try {
+                        const record = JSON.parse(recordStr);
+                        enviarYRegistrar(record, "Cumpleaños");
+                    } catch(e) {
+                        openBirthdayWhatsApp(phone, name);
+                    }
+                }
+            });
+        });
     }
     
     async function fetchData() {
         try {
             showLoading(true);
+            await cargarHistorialEnvios();
             const controller = new AbortController();
             const timeoutId = setTimeout(()=>controller.abort(),15000);
             const resp = await fetch(API_URL, { signal: controller.signal });
@@ -957,13 +1254,113 @@ Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anti
     }
     function applyFilters() { const search=document.getElementById("searchInput").value.toLowerCase(); const comp=document.getElementById("companyFilter").value; const statusFilterValue=document.getElementById("statusFilter").value; const resp=document.getElementById("respFilter").value; const primaFilter=document.getElementById("primaFilter").value; filteredData=rawData.filter(r=>{ if(comp && (r["COMPAÑIA"]?.trim()!==comp)) return false; if(resp && (r["RESPONSABLE"]?.trim()!==resp)) return false; if(statusFilterValue){ const rs=r["ESTATUS SEGURO"]?.trim()||""; const low=rs.toLowerCase(); if(statusFilterValue==="Activo"){ if(!low.includes("activo")) return false; } else if(statusFilterValue==="Terminado"){ if(!(low.includes("terminado")||low.includes("cancelado"))) return false; } else { if(rs!==statusFilterValue) return false; } } if(primaFilter==="pagan"){ if(getPrimaValue(r)<=0) return false; } else if(primaFilter==="no_pagan"){ if(getPrimaValue(r)>0) return false; } if(search && !Object.values(r).join(" ").toLowerCase().includes(search)) return false; return true; }); filteredData=sortByName(filteredData); currentPage=1; if(selectedRecord && !filteredData.some(r=>r===selectedRecord)){ selectedRecord=null; closeDetailPanel(); } renderTable(); if(selectedRecord){ openDetailPanel(); renderClientDetail(selectedRecord); updateDetailTitle(selectedRecord); } }
     function clearFilters() { document.getElementById("searchInput").value=""; document.getElementById("companyFilter").value=""; document.getElementById("statusFilter").value=""; document.getElementById("respFilter").value=""; document.getElementById("primaFilter").value=""; selectedRecord=null; closeDetailPanel(); applyFilters(); }
-    function renderTable() { const limitVal=document.getElementById("rowsPerPageSelect").value; rowsPerPage=limitVal==="all"?filteredData.length:parseInt(limitVal,10); const totalPages=rowsPerPage===filteredData.length?1:Math.ceil(filteredData.length/rowsPerPage); if(currentPage>totalPages) currentPage=totalPages||1; const start=(currentPage-1)*rowsPerPage; const end=Math.min(start+rowsPerPage,filteredData.length); const pageRows=filteredData.slice(start,end); const tbody=document.getElementById("tableBody"); tbody.innerHTML=""; if(pageRows.length===0){ tbody.innerHTML='<tr><td colspan="4">No hay resultados</td></tr>'; } pageRows.forEach(rec=>{ const tr=document.createElement("tr"); if(selectedRecord===rec) tr.classList.add("selected-row"); tr.addEventListener("click",(e)=>{ if(e.target.closest('.btn-wa-table')||e.target.closest('.btn-wa2-table')||e.target.closest('.btn-appointment-table')) return; selectedRecord=rec; renderTable(); openDetailPanel(); renderClientDetail(rec); updateDetailTitle(rec); }); const name=rec["NOMBRE Y APELLIDO"]||"—"; const companyName=rec["COMPAÑIA"]||"—"; const members=rec["N° Miembros"]||"—"; const phone=rec["TELEFONO"]||rec["TELÉFONO"]||""; const primerNombre=name.split(' ')[0]; const tdName=createTd(name); const tdCompany=createTd(toTitleCase(companyName)); const{color}=getCompanyStyle(companyName); if(color!=='inherit') tdCompany.style.color=color; const tdMembers=createTd(members); const tdActions=document.createElement("td"); 
-            const waBtn=document.createElement("button"); waBtn.innerHTML='<i class="fab fa-whatsapp"></i> Enviar'; waBtn.className="btn-wa-table"; waBtn.addEventListener("click",(e)=>{ e.stopPropagation(); openWhatsApp(phone, getWhatsAppMessage(primerNombre)); });
-            const wa2Btn=document.createElement("button"); wa2Btn.innerHTML='<i class="fas fa-hand-peace"></i> Saludar'; wa2Btn.className="btn-wa2-table"; wa2Btn.addEventListener("click",(e)=>{ e.stopPropagation(); openWhatsApp(phone, getWhatsAppMessage2(primerNombre)); });
-            const appBtn=document.createElement("button"); appBtn.innerHTML='<i class="fas fa-calendar-alt"></i> Cita'; appBtn.className="btn-appointment-table"; appBtn.addEventListener("click",(e)=>{ e.stopPropagation(); pendingAppointment.phone=phone; pendingAppointment.record=rec; showAppointmentModal(); });
-            tdActions.appendChild(waBtn); tdActions.appendChild(wa2Btn); tdActions.appendChild(appBtn);
-            tr.appendChild(tdName); tr.appendChild(tdCompany); tr.appendChild(tdMembers); tr.appendChild(tdActions); tbody.appendChild(tr);
-        }); const prevBtn=document.getElementById("prevPageBtn"), nextBtn=document.getElementById("nextPageBtn"), pageInfo=document.getElementById("pageInfo"); const isAll=(document.getElementById("rowsPerPageSelect").value==="all"); if(isAll){ prevBtn.disabled=true; nextBtn.disabled=true; pageInfo.innerText=`Mostrando todos los ${filteredData.length} registros`; } else { prevBtn.disabled=(currentPage===1); nextBtn.disabled=(currentPage===totalPages||totalPages===0); pageInfo.innerText=`Página ${currentPage} de ${totalPages||1}`; } }
+    
+    function renderTable() { 
+        const limitVal=document.getElementById("rowsPerPageSelect").value; 
+        rowsPerPage=limitVal==="all"?filteredData.length:parseInt(limitVal,10); 
+        const totalPages=rowsPerPage===filteredData.length?1:Math.ceil(filteredData.length/rowsPerPage); 
+        if(currentPage>totalPages) currentPage=totalPages||1; 
+        const start=(currentPage-1)*rowsPerPage; 
+        const end=Math.min(start+rowsPerPage,filteredData.length); 
+        const pageRows=filteredData.slice(start,end); 
+        const tbody=document.getElementById("tableBody"); 
+        tbody.innerHTML=""; 
+        if(pageRows.length===0){ 
+            tbody.innerHTML='<tr><td colspan="4">No hay resultados</td></tr>'; 
+        } 
+        pageRows.forEach(rec=>{ 
+            const tr=document.createElement("tr"); 
+            if(selectedRecord===rec) tr.classList.add("selected-row"); 
+            tr.addEventListener("click",(e)=>{ 
+                if(e.target.closest('.btn-wa-table')||e.target.closest('.btn-wa2-table')||e.target.closest('.btn-appointment-table')) return; 
+                selectedRecord=rec; renderTable(); openDetailPanel(); renderClientDetail(rec); updateDetailTitle(rec); 
+            }); 
+            const name=rec["NOMBRE Y APELLIDO"]||"—"; 
+            const companyName=rec["COMPAÑIA"]||"—"; 
+            const members=rec["N° Miembros"]||"—"; 
+            const phone=rec["TELEFONO"]||rec["TELÉFONO"]||""; 
+            const primerNombre=name.split(' ')[0]; 
+            const tdName=createTd(name); 
+            const tdCompany=createTd(toTitleCase(companyName)); 
+            const{color}=getCompanyStyle(companyName); 
+            if(color!=='inherit') tdCompany.style.color=color; 
+            const tdMembers=createTd(members); 
+            const tdActions=document.createElement("td");
+            
+            const waBtn=document.createElement("button"); 
+            waBtn.innerHTML='<i class="fab fa-whatsapp"></i> Enviar'; 
+            waBtn.className="btn-wa-table";
+            const estadoEnvio = getEstadoEnvio(phone, "Enviar");
+            if (estadoEnvio === 'enviado') {
+                waBtn.classList.add('enviado');
+                waBtn.title = 'Mensaje ya enviado (esperar 15 días)';
+                waBtn.style.cursor = 'default';
+            } else if (estadoEnvio === 'reenviar') {
+                waBtn.classList.add('reenviar');
+                waBtn.title = 'Reenviar mensaje (ya pasaron 15 días)';
+            }
+            waBtn.addEventListener("click",(e)=>{ 
+                e.stopPropagation(); 
+                if (estadoEnvio === 'enviado') {
+                    alert('⚠️ Ya se envió un mensaje "Enviar" a este cliente. Debes esperar 15 días para reenviar.');
+                    return;
+                }
+                enviarYRegistrar(rec, "Enviar"); 
+            });
+            
+            const wa2Btn=document.createElement("button"); 
+            wa2Btn.innerHTML='<i class="fas fa-hand-peace"></i> Saludar'; 
+            wa2Btn.className="btn-wa2-table";
+            const estadoSaludo = getEstadoEnvio(phone, "Saludar");
+            if (estadoSaludo === 'enviado') {
+                wa2Btn.classList.add('enviado');
+                wa2Btn.title = 'Saludo ya enviado (esperar 15 días)';
+                wa2Btn.style.cursor = 'default';
+            } else if (estadoSaludo === 'reenviar') {
+                wa2Btn.classList.add('reenviar');
+                wa2Btn.title = 'Reenviar saludo (ya pasaron 15 días)';
+            }
+            wa2Btn.addEventListener("click",(e)=>{ 
+                e.stopPropagation(); 
+                if (estadoSaludo === 'enviado') {
+                    alert('⚠️ Ya se envió un saludo a este cliente. Debes esperar 15 días para reenviar.');
+                    return;
+                }
+                enviarYRegistrar(rec, "Saludar"); 
+            });
+            
+            const appBtn=document.createElement("button"); 
+            appBtn.innerHTML='<i class="fas fa-calendar-alt"></i> Cita'; 
+            appBtn.className="btn-appointment-table"; 
+            appBtn.addEventListener("click",(e)=>{ 
+                e.stopPropagation(); 
+                pendingAppointment.phone=phone; 
+                pendingAppointment.record=rec; 
+                showAppointmentModal(); 
+            });
+            
+            tdActions.appendChild(waBtn); 
+            tdActions.appendChild(wa2Btn); 
+            tdActions.appendChild(appBtn);
+            tr.appendChild(tdName); 
+            tr.appendChild(tdCompany); 
+            tr.appendChild(tdMembers); 
+            tr.appendChild(tdActions); 
+            tbody.appendChild(tr);
+        }); 
+        const prevBtn=document.getElementById("prevPageBtn"), nextBtn=document.getElementById("nextPageBtn"), pageInfo=document.getElementById("pageInfo"); 
+        const isAll=(document.getElementById("rowsPerPageSelect").value==="all"); 
+        if(isAll){ 
+            prevBtn.disabled=true; 
+            nextBtn.disabled=true; 
+            pageInfo.innerText=`Mostrando todos los ${filteredData.length} registros`; 
+        } else { 
+            prevBtn.disabled=(currentPage===1); 
+            nextBtn.disabled=(currentPage===totalPages||totalPages===0); 
+            pageInfo.innerText=`Página ${currentPage} de ${totalPages||1}`; 
+        } 
+    }
+    
     function createTd(txt){ const td=document.createElement("td"); td.innerText=txt; return td; }
     function openDetailPanel(){ document.getElementById("detailPanel").classList.add("open"); }
     function closeDetailPanel(){ document.getElementById("detailPanel").classList.remove("open"); document.getElementById("detailTitle").textContent="Responsable: --"; }
@@ -1022,15 +1419,33 @@ Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anti
         familyHtml+=`</div></div>`;
         html+=familyHtml;
         const phone=record["TELEFONO"]||record["TELÉFONO"]||"";
-        const primerNombre=(record["NOMBRE Y APELLIDO"]||"").split(' ')[0];
         html+=`<div class="detail-section"><button class="btn-wa-detail" id="waDetailBtn"><i class="fab fa-whatsapp"></i> Enviar mensaje (semana)</button>
                  <button class="btn-wa2-detail" id="wa2DetailBtn"><i class="fas fa-hand-peace"></i> Enviar saludo personal</button>
                  <button class="btn-appointment-detail" id="appointmentDetailBtn"><i class="fas fa-calendar-alt"></i> Agendar cita médica</button></div>`;
         container.innerHTML=html;
-        document.getElementById("waDetailBtn")?.addEventListener("click",()=>openWhatsApp(phone, getWhatsAppMessage(primerNombre)));
-        document.getElementById("wa2DetailBtn")?.addEventListener("click",()=>openWhatsApp(phone, getWhatsAppMessage2(primerNombre)));
+        
+        const estadoEnvio = getEstadoEnvio(phone, "Enviar");
+        const estadoSaludo = getEstadoEnvio(phone, "Saludar");
+        
+        document.getElementById("waDetailBtn")?.addEventListener("click",() => {
+            if (estadoEnvio === 'enviado') {
+                alert('⚠️ Ya se envió un mensaje "Enviar" a este cliente. Debes esperar 15 días para reenviar.');
+                return;
+            }
+            enviarYRegistrar(record, "Enviar");
+        });
+        
+        document.getElementById("wa2DetailBtn")?.addEventListener("click",() => {
+            if (estadoSaludo === 'enviado') {
+                alert('⚠️ Ya se envió un saludo a este cliente. Debes esperar 15 días para reenviar.');
+                return;
+            }
+            enviarYRegistrar(record, "Saludar");
+        });
+        
         document.getElementById("appointmentDetailBtn")?.addEventListener("click",()=>{ pendingAppointment.phone=phone; pendingAppointment.record=record; showAppointmentModal(); });
     }
+    
     function goPrevPage(){ if(currentPage>1){ currentPage--; renderTable(); if(selectedRecord){ const start=(currentPage-1)*rowsPerPage; const end=start+rowsPerPage; if(!filteredData.slice(start,end).includes(selectedRecord)){ selectedRecord=null; closeDetailPanel(); } else { openDetailPanel(); renderClientDetail(selectedRecord); updateDetailTitle(selectedRecord); } } } }
     function goNextPage(){ const totalPages=rowsPerPage===filteredData.length?1:Math.ceil(filteredData.length/rowsPerPage); if(currentPage<totalPages){ currentPage++; renderTable(); if(selectedRecord){ const start=(currentPage-1)*rowsPerPage; const end=start+rowsPerPage; if(!filteredData.slice(start,end).includes(selectedRecord)){ selectedRecord=null; closeDetailPanel(); } else { openDetailPanel(); renderClientDetail(selectedRecord); updateDetailTitle(selectedRecord); } } } }
     const modal = document.getElementById("appointmentModal");
@@ -1070,8 +1485,29 @@ Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anti
     document.getElementById("closeModalBtn").addEventListener("click", hideAppointmentModal);
     document.getElementById("cancelModalBtn").addEventListener("click", hideAppointmentModal);
     window.addEventListener("click", (e) => { if(e.target === modal) hideAppointmentModal(); });
-    document.getElementById("appointmentForm").addEventListener("submit", (e) => {
+    
+    // ============================================================
+    // FUNCIÓN PARA GUARDAR LA CITA EN GOOGLE SHEETS
+    // ============================================================
+    async function guardarCitaEnSheets(datos) {
+        try {
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+            console.log('Cita enviada a Sheets correctamente');
+            return true;
+        } catch (error) {
+            console.error('Error al guardar la cita:', error);
+            return false;
+        }
+    }
+
+    document.getElementById("appointmentForm").addEventListener("submit", async (e) => {
         e.preventDefault();
+        
         const patientName = document.getElementById("patientSelect").value;
         const type = document.getElementById("appointmentType").value;
         const doctorName = document.getElementById("doctorName").value.trim();
@@ -1079,16 +1515,44 @@ Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anti
         const time = document.getElementById("appointmentTime").value.trim();
         const address = document.getElementById("appointmentAddress").value.trim();
         const clinicPhone = document.getElementById("clinicPhone").value.trim();
+        
         if(!patientName) { alert("Seleccione el paciente."); return; }
-        if(!doctorName) { alert("Ingrese el nombre del médico."); return; }
+        if(!doctorName) { alert("Ingrese el nombre del médico o clínica."); return; }
         if(!date || !time || !address || !clinicPhone) { alert("Por favor complete todos los campos."); return; }
+        
+        const titular = pendingAppointment.record ? pendingAppointment.record["NOMBRE Y APELLIDO"] || "No especificado" : "No especificado";
+        
+        const fechaSolicitud = new Date().toLocaleString('es-ES', { 
+            day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        
+        const datosCita = {
+            titular: titular,
+            paciente: patientName,
+            tipoCita: type,
+            medico: doctorName,
+            fecha: date,
+            hora: time,
+            direccion: address,
+            telefonoClinica: clinicPhone,
+            fechaSolicitud: fechaSolicitud
+        };
+        
+        await guardarCitaEnSheets(datosCita);
+        addAppointment(titular, patientName, date);
+        
         const message = getAppointmentMessage(patientName, doctorName, type, date, time, address, clinicPhone);
         if(pendingAppointment.phone) {
             openWhatsApp(pendingAppointment.phone, message);
-            hideAppointmentModal();
-        } else { alert("No hay número de teléfono del cliente."); }
+        } else {
+            alert("Cita guardada. No hay número de teléfono para enviar WhatsApp.");
+        }
+        hideAppointmentModal();
     });
+    
+    // Event Listeners
     document.getElementById("refreshDataBtn").addEventListener("click", fetchData);
+    document.getElementById("syncAppointmentsBtn").addEventListener("click", syncAppointmentsFromSheet);
     document.getElementById("searchInput").addEventListener("input", applyFilters);
     document.getElementById("companyFilter").addEventListener("change", applyFilters);
     document.getElementById("statusFilter").addEventListener("change", applyFilters);
@@ -1100,7 +1564,15 @@ Llegar 30 minutos antes de la cita, si no puede asistir llamar 48 horas con anti
     document.getElementById("nextPageBtn").addEventListener("click", goNextPage);
     document.getElementById("closeDetailBtn").addEventListener("click", closeDetailPanel);
     document.getElementById("themeToggle").addEventListener("click", () => { document.body.classList.toggle("light"); const icon = document.getElementById("themeToggle").querySelector("i"); icon.className = document.body.classList.contains("light") ? "fas fa-sun" : "fas fa-moon"; });
-    window.addEventListener("DOMContentLoaded", fetchData);
+    
+    // Inicialización
+    window.addEventListener("DOMContentLoaded", function() {
+        loadAppointments();
+        setTimeout(() => {
+            syncAppointmentsFromSheet().then(() => renderAppointments());
+        }, 1000);
+        fetchData();
+    });
 </script>
 </body>
 </html>
