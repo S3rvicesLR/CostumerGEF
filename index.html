@@ -212,6 +212,8 @@
             margin-left: 4px;
         }
         .birthday-wa-btn:hover { background: #128C7E; }
+        .birthday-wa-btn:disabled { background: var(--btn-disabled); cursor: not-allowed; opacity: 0.6; }
+        .birthday-wa-btn:disabled:hover { background: var(--btn-disabled); transform: none; }
         .empty-birthday { color: var(--text-muted); font-size: 0.75rem; padding: 8px 0; }
         .filters-row {
             display: flex;
@@ -600,14 +602,14 @@
             <div id="birthdayList" class="birthday-list">Cargando...</div>
         </div>
 
-        <!-- NOTIFICADOR DE CITAS CON HISTORIAL -->
+        <!-- NOTIFICADOR DE CITAS CON HISTORIAL (CONECTADO AL NUEVO SHEETS - SOLO LECTURA) -->
         <div class="birthday-card" id="appointmentNotifier" style="margin-top: 10px;">
             <h3><i class="fas fa-calendar-check"></i> Historial / Próximas Citas <span id="appointmentBadge" class="birthday-days" style="background: var(--accent-coral);">0</span></h3>
             <div id="appointmentList" class="birthday-list">
-                <div class="empty-birthday">No hay citas registradas</div>
+                <div class="empty-birthday">Cargando citas...</div>
             </div>
             <small style="color: var(--text-muted); font-size: 0.6rem; margin-top: 8px; display: block;">
-                <i class="fas fa-info-circle"></i> Las citas se conservan hasta que las elimines con el botón <strong>×</strong>.
+                <i class="fas fa-info-circle"></i> Las citas se muestran desde "RegistroCitasMedicas - GEF".
             </small>
         </div>
 
@@ -717,12 +719,21 @@
     const REGISTRO_URL = "https://script.google.com/macros/s/AKfycbxkXZa96ZYJ7SycnAycu-K7n0X-ENRF4l6hmVUQKaUfuEKOeXgR2FBFtUgTS7FEZGbpOA/exec";
 
     // ============================================================
-    // CONFIGURACIÓN - URL DE CITAS (Google Apps Script)
+    // CONFIGURACIÓN - SHEETS PARA CITAS
     // ============================================================
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyRhXNNhvyOgDZezIYun21IsW6oQ0mjLd9YxYYnMDKVmy2uvz2XwmS_tBbzAGEqpox6/exec";
+    // NUEVO sheets (SOLO LECTURA - historial de citas)
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzCEmfofQW0LGcUPQM0xon3uHlsQlj2fT3xytx-QcpaCeX8pjv234wCIni7lUtdXLC/exec";
 
+    // SHEETS ORIGINAL (ESCRITURA - guardar citas)
+    const SCRIPT_URL_OLD = "https://script.google.com/macros/s/AKfycbyRhXNNhvyOgDZezIYun21IsW6oQ0mjLd9YxYYnMDKVmy2uvz2XwmS_tBbzAGEqpox6/exec";
+
+    // ============================================================
+    // CONFIGURACIÓN - SCRIPT DE OBAMACARE (clientes)
+    // ============================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbxSiZXMxV4zw7IDvCFLtAcN7_aTYf4kbV1wcEGjgm_RK_qJ7eY2F8c2zwZOGIe7PO_gxA/exec";
-    let rawData = [];
+
+    let rawData = []; // Datos de clientes de Obamacare
+    let clientData = []; // Referencia a rawData para búsqueda de números de teléfono
     let filteredData = [];
     let selectedRecord = null;
     let currentPage = 1;
@@ -848,148 +859,173 @@
         }, 1000);
     }
 
-    // ========== NOTIFICADOR DE CITAS CON HISTORIAL ==========
+    // ========== NOTIFICADOR DE CITAS (CONECTADO AL NUEVO SHEETS - SOLO LECTURA) ==========
     let appointments = [];
 
-    function loadAppointments() {
-        const stored = localStorage.getItem('gef_appointments');
-        if (stored) {
-            try {
-                appointments = JSON.parse(stored);
-                appointments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            } catch (e) {
+    // Cargar citas desde el nuevo sheets (solo lectura)
+    async function loadAppointmentsFromSheet() {
+        try {
+            const url = SCRIPT_URL + '?action=get';
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const result = await resp.json();
+            if (result.success && result.data) {
+                appointments = result.data;
+                // Ordenar por fecha de solicitud (más reciente primero)
+                appointments.sort((a, b) => {
+                    const fechaA = a['Fecha de la Solicitud'] || '';
+                    const fechaB = b['Fecha de la Solicitud'] || '';
+                    return fechaB.localeCompare(fechaA);
+                });
+                renderAppointments();
+            } else {
+                console.warn('No se pudieron cargar las citas:', result);
                 appointments = [];
+                renderAppointments();
             }
-        }
-        renderAppointments();
-    }
-
-    function saveAppointments() {
-        localStorage.setItem('gef_appointments', JSON.stringify(appointments));
-    }
-
-    function addAppointment(titular, paciente, fecha) {
-        const newApp = {
-            id: Date.now() + Math.random(),
-            titular: titular || 'Sin titular',
-            paciente: paciente || 'Sin paciente',
-            fecha: fecha || 'Sin fecha',
-            timestamp: new Date().toISOString()
-        };
-        const exists = appointments.some(a => 
-            a.titular === newApp.titular && 
-            a.paciente === newApp.paciente && 
-            a.fecha === newApp.fecha
-        );
-        if (!exists) {
-            appointments.unshift(newApp);
-            if (appointments.length > 100) appointments.pop();
-            saveAppointments();
+        } catch (error) {
+            console.error('Error al cargar citas desde el sheets:', error);
+            appointments = [];
             renderAppointments();
         }
     }
 
-    function removeAppointment(id) {
-        appointments = appointments.filter(a => a.id !== id);
-        saveAppointments();
-        renderAppointments();
+    // Guardar cita en el sheets ORIGINAL (escritura)
+    async function guardarCitaEnSheets(datos) {
+        try {
+            const response = await fetch(SCRIPT_URL_OLD, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+            console.log('Cita guardada en "CitasMedicas - GEF" correctamente');
+            return true;
+        } catch (error) {
+            console.error('Error al guardar la cita:', error);
+            return false;
+        }
     }
 
+    // ========== CONVERTIR FECHA A MM/DD/AAAA ==========
+    function convertToMMDDYYYY(fechaStr) {
+        if (!fechaStr) return '';
+        
+        // Intentar parsear como fecha ISO (YYYY-MM-DDTHH:mm:ss.sssZ)
+        let fechaObj = new Date(fechaStr);
+        if (!isNaN(fechaObj.getTime())) {
+            // Es una fecha válida (ISO o timestamp)
+            const mes = String(fechaObj.getMonth() + 1).padStart(2, '0');
+            const dia = String(fechaObj.getDate()).padStart(2, '0');
+            const anio = fechaObj.getFullYear();
+            return `${mes}/${dia}/${anio}`;
+        }
+        
+        // Si no es ISO, intentar con formato DD/MM/AAAA
+        const partes = fechaStr.split('/');
+        if (partes.length === 3) {
+            const dia = partes[0].padStart(2, '0');
+            const mes = partes[1].padStart(2, '0');
+            const anio = partes[2];
+            return `${mes}/${dia}/${anio}`;
+        }
+        
+        return fechaStr; // devolver tal cual si no se puede parsear
+    }
+
+    // Renderizar citas
     function renderAppointments() {
         const container = document.getElementById('appointmentList');
         const badge = document.getElementById('appointmentBadge');
         if (!container) return;
+
         badge.textContent = appointments.length;
+
         if (appointments.length === 0) {
             container.innerHTML = '<div class="empty-birthday">No hay citas registradas</div>';
             return;
         }
+
         let html = '';
         const toShow = appointments.slice(0, 30);
-        toShow.forEach(app => {
-            let fechaMostrar = app.fecha;
-            try {
-                const partes = app.fecha.split('/');
-                if (partes.length === 3) {
-                    const d = new Date(partes[2], partes[1]-1, partes[0]);
-                    if (!isNaN(d)) {
-                        fechaMostrar = d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
-                    }
+        toShow.forEach((app, index) => {
+            const titular = app.Titular || 'Sin titular';
+            const paciente = app.Paciente || 'Sin paciente';
+            const fechaOriginal = app.Fecha || '';
+            const fechaFormateada = convertToMMDDYYYY(fechaOriginal);
+
+            // Buscar el teléfono del titular en los datos de clientes (rawData)
+            let telefono = '';
+            if (clientData && clientData.length > 0) {
+                const cliente = clientData.find(c => 
+                    (c['NOMBRE Y APELLIDO'] || '').toLowerCase().trim() === titular.toLowerCase().trim()
+                );
+                if (cliente) {
+                    telefono = cliente['TELEFONO'] || cliente['TELÉFONO'] || '';
                 }
-            } catch(e) {}
+            }
+
+            // Preparar el botón de WhatsApp
+            let waBtnHtml = '';
+            if (telefono) {
+                // Escapar el titular para pasarlo como parámetro (ya no se usa en el mensaje, pero lo dejamos por si acaso)
+                const titularEscapado = escapeHtml(titular);
+                waBtnHtml = `<button class="birthday-wa-btn" onclick="openWhatsAppFromCita('${telefono}')">
+                    <i class="fab fa-whatsapp"></i> Contactar
+                </button>`;
+            } else {
+                waBtnHtml = `<button class="birthday-wa-btn" disabled>
+                    <i class="fas fa-user-slash"></i> Sin número
+                </button>`;
+            }
+
             html += `
                 <div class="birthday-item" style="background: var(--card-bg); border-left: 3px solid var(--accent-coral);">
                     <i class="fas fa-user" style="color: var(--accent-coral);"></i>
-                    <span class="birthday-name">${escapeHtml(app.titular)}</span>
-                    <span class="birthday-relation">→ ${escapeHtml(app.paciente)}</span>
-                    <span class="birthday-date">📅 ${escapeHtml(fechaMostrar)}</span>
-                    <button class="birthday-wa-btn" onclick="removeAppointment(${app.id})" style="background: #e74c3c; padding: 2px 8px;">
-                        <i class="fas fa-times"></i> Eliminar
-                    </button>
+                    <span class="birthday-name">${escapeHtml(titular)}</span>
+                    <span class="birthday-relation">→ ${escapeHtml(paciente)}</span>
+                    <span class="birthday-date">📅 ${escapeHtml(fechaFormateada)}</span>
+                    ${waBtnHtml}
                 </div>
             `;
         });
+
         if (appointments.length > 30) {
             html += `<div class="birthday-item" style="background: transparent; border: none; color: var(--text-muted);">
                 <i class="fas fa-ellipsis-h"></i> Y ${appointments.length - 30} más...
             </div>`;
         }
+
         container.innerHTML = html;
+    }
+
+    // ========== FUNCIÓN PARA CONTACTAR POR WHATSAPP (mensaje "Hola 👋") ==========
+    function openWhatsAppFromCita(telefono) {
+        if (!telefono) {
+            alert('No hay número de teléfono registrado para este titular.');
+            return;
+        }
+        const mensaje = `Hola 👋`;
+        // Reutilizar la función openWhatsApp que ya tiene la lógica de normalización y codificación
+        openWhatsApp(telefono, mensaje);
     }
 
     // ========== SINCRONIZACIÓN CON GOOGLE SHEETS (CITAS) ==========
     async function syncAppointmentsFromSheet() {
+        const btn = document.getElementById('syncAppointmentsBtn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Sincronizando...';
+        btn.disabled = true;
+        
         try {
-            const url = SCRIPT_URL + '?action=get';
-            console.log('Intentando sincronizar con:', url);
-            const resp = await fetch(url);
-            console.log('Respuesta HTTP:', resp.status, resp.statusText);
-            if (!resp.ok) {
-                throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
-            }
-            let result;
-            try {
-                result = await resp.json();
-            } catch (parseError) {
-                console.warn('La respuesta no es JSON. El script podría no estar listo o la URL es incorrecta.');
-                return;
-            }
-            console.log('Datos recibidos:', result);
-            if (result.success && result.data && result.data.length > 0) {
-                let addedCount = 0;
-                result.data.forEach(row => {
-                    const titular = row.Titular || 'Sin titular';
-                    const paciente = row.Paciente || 'Sin paciente';
-                    const fecha = row.Fecha || 'Sin fecha';
-                    const exists = appointments.some(a => 
-                        a.titular === titular && 
-                        a.paciente === paciente && 
-                        a.fecha === fecha
-                    );
-                    if (!exists) {
-                        appointments.push({
-                            id: Date.now() + Math.random() + addedCount,
-                            titular: titular,
-                            paciente: paciente,
-                            fecha: fecha,
-                            timestamp: row['Fecha de Solicitud'] || new Date().toISOString()
-                        });
-                        addedCount++;
-                    }
-                });
-                if (addedCount > 0) {
-                    appointments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                    saveAppointments();
-                    renderAppointments();
-                    console.log(`✅ Se sincronizaron ${addedCount} citas históricas desde el Sheets.`);
-                } else {
-                    console.log('ℹ️ No se encontraron citas nuevas para sincronizar.');
-                }
-            } else {
-                console.log('⚠️ No se pudieron obtener citas del Sheets o está vacío.');
-            }
+            await loadAppointmentsFromSheet();
+            console.log('✅ Citas sincronizadas desde "RegistroCitasMedicas - GEF"');
         } catch (error) {
             console.error('Error al sincronizar:', error);
+            alert('Error al sincronizar las citas. Verifica la conexión con el sheets.');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
     }
 
@@ -1202,8 +1238,12 @@ Llegar 30 minutos antes de la cita, Si no puede asistir llamar 48 horas antes pa
             const records = rows.map(row=>{ let obj={}; headers.forEach((h,i)=>obj[h]=row[i]??""); return obj; }).filter(r=>Object.values(r).some(v=>v!==""));
             if(records.length===0) throw new Error("No hay registros");
             rawData = sortByName(records);
+            clientData = rawData; // Guardamos referencia para las citas
             updateKPIs(); updateSummaryCards(); updateResponsablesList(); populateFilters(); updateBirthdayNotifier();
             applyFilters(); closeDetailPanel(); selectedRecord=null; showLoading(false);
+            
+            // Cargar citas desde el nuevo sheets (solo lectura)
+            await loadAppointmentsFromSheet();
         } catch(err) { console.error(err); document.getElementById("tableBody").innerHTML=`<tr><td colspan="4">Error: ${err.message}</td></tr>`; showLoading(false); }
     }
     function showLoading(isLoad) { const btn=document.getElementById("refreshDataBtn"); if(isLoad){ btn.innerHTML='<i class="fas fa-spinner fa-pulse"></i> Cargando...'; btn.disabled=true; } else { btn.innerHTML='<i class="fas fa-sync-alt"></i> Actualizar'; btn.disabled=false; } }
@@ -1487,24 +1527,29 @@ Llegar 30 minutos antes de la cita, Si no puede asistir llamar 48 horas antes pa
     window.addEventListener("click", (e) => { if(e.target === modal) hideAppointmentModal(); });
     
     // ============================================================
-    // FUNCIÓN PARA GUARDAR LA CITA EN GOOGLE SHEETS
+    // FUNCIÓN PARA GUARDAR LA CITA EN EL SHEETS ORIGINAL (ESCRITURA)
     // ============================================================
-    async function guardarCitaEnSheets(datos) {
+    // Usamos SCRIPT_URL_OLD (el script de CitasMedicas - GEF original)
+    // ============================================================
+    async function guardarCitaEnSheetsOriginal(datos) {
         try {
-            const response = await fetch(SCRIPT_URL, {
+            const response = await fetch(SCRIPT_URL_OLD, {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datos)
             });
-            console.log('Cita enviada a Sheets correctamente');
+            console.log('✅ Cita guardada en "CitasMedicas - GEF" correctamente');
             return true;
         } catch (error) {
-            console.error('Error al guardar la cita:', error);
+            console.error('❌ Error al guardar la cita:', error);
             return false;
         }
     }
 
+    // ============================================================
+    // EVENTO DEL FORMULARIO DE CITAS
+    // ============================================================
     document.getElementById("appointmentForm").addEventListener("submit", async (e) => {
         e.preventDefault();
         
@@ -1538,9 +1583,13 @@ Llegar 30 minutos antes de la cita, Si no puede asistir llamar 48 horas antes pa
             fechaSolicitud: fechaSolicitud
         };
         
-        await guardarCitaEnSheets(datosCita);
-        addAppointment(titular, patientName, date);
+        // Guardar en el sheets ORIGINAL (CitasMedicas - GEF)
+        await guardarCitaEnSheetsOriginal(datosCita);
         
+        // Recargar el historial desde el NUEVO sheets (RegistroCitasMedicas - GEF)
+        await loadAppointmentsFromSheet();
+        
+        // Enviar mensaje por WhatsApp
         const message = getAppointmentMessage(patientName, doctorName, type, date, time, address, clinicPhone);
         if(pendingAppointment.phone) {
             openWhatsApp(pendingAppointment.phone, message);
@@ -1567,10 +1616,7 @@ Llegar 30 minutos antes de la cita, Si no puede asistir llamar 48 horas antes pa
     
     // Inicialización
     window.addEventListener("DOMContentLoaded", function() {
-        loadAppointments();
-        setTimeout(() => {
-            syncAppointmentsFromSheet().then(() => renderAppointments());
-        }, 1000);
+        // Cargar datos de clientes (incluye la carga de citas al final)
         fetchData();
     });
 </script>
